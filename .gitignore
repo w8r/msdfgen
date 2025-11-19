@@ -31,3 +31,4 @@ out/
 /cmake-gen.bat
 /line-ending-check.bat
 dist
+node_modules
