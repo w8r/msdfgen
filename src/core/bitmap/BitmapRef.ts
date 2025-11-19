@@ -1,5 +1,5 @@
-import { YAxisOrientation, DEFAULT_Y_AXIS_ORIENTATION } from './YAxisOrientation'
-import type { BitmapArrayType } from './Bitmap'
+import { YAxisOrientation, DEFAULT_Y_AXIS_ORIENTATION } from './YAxisOrientation';
+import type { BitmapArrayType } from './Bitmap';
 
 /**
  * Non-owning reference to a 2D image bitmap.
@@ -12,24 +12,24 @@ import type { BitmapArrayType } from './Bitmap'
  * @template N - Number of channels per pixel
  */
 export class BitmapRef<T extends BitmapArrayType = Float32Array, N extends number = 1> {
-  readonly pixels: T
-  readonly width: number
-  readonly height: number
-  readonly channels: N
-  readonly yOrientation: YAxisOrientation
+  readonly pixels: T;
+  readonly width: number;
+  readonly height: number;
+  readonly channels: N;
+  readonly yOrientation: YAxisOrientation;
 
   constructor(
     pixels: T,
     width: number,
     height: number,
     channels: N,
-    yOrientation: YAxisOrientation = DEFAULT_Y_AXIS_ORIENTATION
+    yOrientation: YAxisOrientation = DEFAULT_Y_AXIS_ORIENTATION,
   ) {
-    this.pixels = pixels
-    this.width = width
-    this.height = height
-    this.channels = channels
-    this.yOrientation = yOrientation
+    this.pixels = pixels;
+    this.width = width;
+    this.height = height;
+    this.channels = channels;
+    this.yOrientation = yOrientation;
   }
 
   /**
@@ -37,8 +37,8 @@ export class BitmapRef<T extends BitmapArrayType = Float32Array, N extends numbe
    * The returned view has length N (number of channels)
    */
   getPixel(x: number, y: number): T {
-    const index = this.channels * (this.width * y + x)
-    return this.pixels.subarray(index, index + this.channels) as T
+    const index = this.channels * (this.width * y + x);
+    return this.pixels.subarray(index, index + this.channels) as T;
   }
 
   /**
@@ -48,8 +48,8 @@ export class BitmapRef<T extends BitmapArrayType = Float32Array, N extends numbe
    * @param channel - Channel index (0 to N-1)
    */
   getChannel(x: number, y: number, channel: number): number {
-    const index = this.channels * (this.width * y + x) + channel
-    return this.pixels[index]
+    const index = this.channels * (this.width * y + x) + channel;
+    return this.pixels[index];
   }
 
   /**
@@ -57,9 +57,9 @@ export class BitmapRef<T extends BitmapArrayType = Float32Array, N extends numbe
    * Note: This modifies the referenced data
    */
   setPixel(x: number, y: number, values: number[] | ArrayLike<number>): void {
-    const index = this.channels * (this.width * y + x)
+    const index = this.channels * (this.width * y + x);
     for (let i = 0; i < this.channels; i++) {
-      this.pixels[index + i] = values[i]
+      this.pixels[index + i] = values[i];
     }
   }
 
@@ -68,7 +68,7 @@ export class BitmapRef<T extends BitmapArrayType = Float32Array, N extends numbe
    * Note: This modifies the referenced data
    */
   setChannel(x: number, y: number, channel: number, value: number): void {
-    const index = this.channels * (this.width * y + x) + channel
-    this.pixels[index] = value
+    const index = this.channels * (this.width * y + x) + channel;
+    this.pixels[index] = value;
   }
 }

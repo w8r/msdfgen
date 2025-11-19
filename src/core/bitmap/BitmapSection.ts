@@ -1,6 +1,6 @@
-import { YAxisOrientation, DEFAULT_Y_AXIS_ORIENTATION } from './YAxisOrientation'
-import type { BitmapArrayType } from './Bitmap'
-import { BitmapRef } from './BitmapRef'
+import { YAxisOrientation, DEFAULT_Y_AXIS_ORIENTATION } from './YAxisOrientation';
+import type { BitmapArrayType } from './Bitmap';
+import { BitmapRef } from './BitmapRef';
 
 /**
  * Non-owning reference to a 2D image bitmap with non-contiguous rows.
@@ -14,21 +14,21 @@ import { BitmapRef } from './BitmapRef'
  * @template N - Number of channels per pixel
  */
 export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends number = 1> {
-  pixels: T
-  readonly width: number
-  readonly height: number
-  readonly channels: N
+  pixels: T;
+  readonly width: number;
+  readonly height: number;
+  readonly channels: N;
   /**
    * Specifies the difference between the beginnings of adjacent pixel rows
    * as the number of array elements. Can be negative for vertically flipped bitmaps.
    */
-  rowStride: number
-  yOrientation: YAxisOrientation
+  rowStride: number;
+  yOrientation: YAxisOrientation;
   /**
    * Offset into the pixels array where this section starts
    * Used for reorientation
    */
-  private pixelOffset: number
+  private pixelOffset: number;
 
   constructor(
     pixels: T,
@@ -37,22 +37,22 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
     channels: N,
     rowStride?: number,
     yOrientation: YAxisOrientation = DEFAULT_Y_AXIS_ORIENTATION,
-    pixelOffset: number = 0
+    pixelOffset: number = 0,
   ) {
-    this.pixels = pixels
-    this.width = width
-    this.height = height
-    this.channels = channels
-    this.rowStride = rowStride ?? channels * width
-    this.yOrientation = yOrientation
-    this.pixelOffset = pixelOffset
+    this.pixels = pixels;
+    this.width = width;
+    this.height = height;
+    this.channels = channels;
+    this.rowStride = rowStride ?? channels * width;
+    this.yOrientation = yOrientation;
+    this.pixelOffset = pixelOffset;
   }
 
   /**
    * Create a BitmapSection from a BitmapRef (contiguous storage)
    */
   static fromRef<T extends BitmapArrayType, N extends number>(
-    ref: BitmapRef<T, N>
+    ref: BitmapRef<T, N>,
   ): BitmapSection<T, N> {
     return new BitmapSection<T, N>(
       ref.pixels,
@@ -60,8 +60,8 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
       ref.height,
       ref.channels,
       ref.channels * ref.width,
-      ref.yOrientation
-    )
+      ref.yOrientation,
+    );
   }
 
   /**
@@ -69,16 +69,16 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
    * Accounts for rowStride in indexing
    */
   getPixel(x: number, y: number): T {
-    const index = this.pixelOffset + this.rowStride * y + this.channels * x
-    return this.pixels.subarray(index, index + this.channels) as T
+    const index = this.pixelOffset + this.rowStride * y + this.channels * x;
+    return this.pixels.subarray(index, index + this.channels) as T;
   }
 
   /**
    * Gets a single channel value at (x, y)
    */
   getChannel(x: number, y: number, channel: number): number {
-    const index = this.pixelOffset + this.rowStride * y + this.channels * x + channel
-    return this.pixels[index]
+    const index = this.pixelOffset + this.rowStride * y + this.channels * x + channel;
+    return this.pixels[index];
   }
 
   /**
@@ -86,9 +86,9 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
    * Note: This modifies the referenced data
    */
   setPixel(x: number, y: number, values: number[] | ArrayLike<number>): void {
-    const index = this.pixelOffset + this.rowStride * y + this.channels * x
+    const index = this.pixelOffset + this.rowStride * y + this.channels * x;
     for (let i = 0; i < this.channels; i++) {
-      this.pixels[index + i] = values[i]
+      this.pixels[index + i] = values[i];
     }
   }
 
@@ -97,8 +97,8 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
    * Note: This modifies the referenced data
    */
   setChannel(x: number, y: number, channel: number, value: number): void {
-    const index = this.pixelOffset + this.rowStride * y + this.channels * x + channel
-    this.pixels[index] = value
+    const index = this.pixelOffset + this.rowStride * y + this.channels * x + channel;
+    this.pixels[index] = value;
   }
 
   /**
@@ -109,7 +109,7 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
    * @param yMax - Bottom boundary (exclusive)
    */
   getSection(xMin: number, yMin: number, xMax: number, yMax: number): BitmapSection<T, N> {
-    const newOffset = this.pixelOffset + this.rowStride * yMin + this.channels * xMin
+    const newOffset = this.pixelOffset + this.rowStride * yMin + this.channels * xMin;
     return new BitmapSection<T, N>(
       this.pixels,
       xMax - xMin,
@@ -117,8 +117,8 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
       this.channels,
       this.rowStride,
       this.yOrientation,
-      newOffset
-    )
+      newOffset,
+    );
   }
 
   /**
@@ -129,10 +129,10 @@ export class BitmapSection<T extends BitmapArrayType = Float32Array, N extends n
   reorient(newYAxisOrientation: YAxisOrientation): void {
     if (this.yOrientation !== newYAxisOrientation) {
       // Move to the last row and reverse direction
-      const lastRowOffset = this.rowStride * (this.height - 1)
-      this.pixelOffset += lastRowOffset
-      this.rowStride = -this.rowStride
-      this.yOrientation = newYAxisOrientation
+      const lastRowOffset = this.rowStride * (this.height - 1);
+      this.pixelOffset += lastRowOffset;
+      this.rowStride = -this.rowStride;
+      this.yOrientation = newYAxisOrientation;
     }
   }
 }

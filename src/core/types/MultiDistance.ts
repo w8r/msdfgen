@@ -7,18 +7,18 @@
  */
 export class MultiDistance {
   /** Red channel distance */
-  r: number
+  r: number;
 
   /** Green channel distance */
-  g: number
+  g: number;
 
   /** Blue channel distance */
-  b: number
+  b: number;
 
   constructor(r: number = 0, g: number = 0, b: number = 0) {
-    this.r = r
-    this.g = g
-    this.b = b
+    this.r = r;
+    this.g = g;
+    this.b = b;
   }
 
   /**
@@ -29,7 +29,7 @@ export class MultiDistance {
    * This is mathematically equivalent to the middle value of three numbers.
    */
   median(): number {
-    return Math.max(Math.min(this.r, this.g), Math.min(Math.max(this.r, this.g), this.b))
+    return Math.max(Math.min(this.r, this.g), Math.min(Math.max(this.r, this.g), this.b));
   }
 
   /**
@@ -37,7 +37,7 @@ export class MultiDistance {
    * Returns true if this multi-distance's median is less than the other's median.
    */
   lessThan(other: MultiDistance): boolean {
-    return this.median() < other.median()
+    return this.median() < other.median();
   }
 
   /**
@@ -45,7 +45,7 @@ export class MultiDistance {
    * Returns true if this multi-distance's median is greater than the other's median.
    */
   greaterThan(other: MultiDistance): boolean {
-    return this.median() > other.median()
+    return this.median() > other.median();
   }
 
   /**
@@ -53,7 +53,7 @@ export class MultiDistance {
    * Returns true if this multi-distance's median is less than or equal to the other's median.
    */
   lessThanOrEqual(other: MultiDistance): boolean {
-    return this.median() <= other.median()
+    return this.median() <= other.median();
   }
 
   /**
@@ -61,6 +61,6 @@ export class MultiDistance {
    * Returns true if this multi-distance's median is greater than or equal to the other's median.
    */
   greaterThanOrEqual(other: MultiDistance): boolean {
-    return this.median() >= other.median()
+    return this.median() >= other.median();
   }
 }
