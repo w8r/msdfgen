@@ -88,23 +88,36 @@ msdfgen-ts/
 
 **C++ Reference**: `core/edge-selectors.h` (MultiDistance, MultiAndTrueDistance structs)
 
-### 1.4 Bitmap System (Priority: HIGH)
-**Files**: `Bitmap.ts`, `BitmapRef.ts`
+### 1.4 Bitmap System (Priority: HIGH) ✅ COMPLETED
+**Files**: `Bitmap.ts`, `BitmapRef.ts`, `BitmapSection.ts`, `YAxisOrientation.ts`
 
-- [ ] Bitmap<T, N> generic class
-  - TypedArray backing (Float32Array, Float64Array, Uint8Array)
-  - width, height properties
+- [x] Bitmap<T, N> generic class
+  - TypedArray backing (Float32Array, Float64Array, Uint8Array, Uint8ClampedArray)
+  - width, height, channelCount properties
   - N = number of channels (1, 3, 4)
-  - T = data type (number/byte)
-  - indexing: get(x, y, channel?): T
-  - setPixel(x, y, values: T[]): void
-- [ ] BitmapSection (view/slice)
-  - Non-owning reference to bitmap region
-  - rowStride support (can be negative for Y-flip)
-  - Coordinate reorientation
-- [ ] YAxisOrientation enum (TOP_DOWN, BOTTOM_UP)
+  - T = typed array type
+  - getPixel(x, y): TypedArrayView, setPixel(x, y, values)
+  - getChannel/setChannel for individual channel access
+  - fill() and fillChannels() operations
+  - copyFrom(), copyFromRef(), copyFromSection()
+  - ref() and section() conversions
+  - getSection(xMin, yMin, xMax, yMax) for subsections
+- [x] BitmapRef<T, N> class
+  - Non-owning reference to bitmap data
+  - Read/write pixel access through reference
+  - Shares underlying data with source bitmap
+- [x] BitmapSection<T, N> class
+  - Non-owning reference with rowStride support
+  - Can represent sections, padded rows, or flipped bitmaps
+  - rowStride can be negative for Y-flip
+  - reorient(newOrientation) for coordinate reorientation
+  - Nested subsections via getSection()
+  - Internal pixelOffset tracking for proper indexing
+- [x] YAxisOrientation enum (Y_UPWARD, Y_DOWNWARD)
+  - Default: Y_UPWARD (mathematical convention)
+- [x] 54 tests passing (28 Bitmap, 26 BitmapRef+BitmapSection)
 
-**C++ Reference**: `core/Bitmap.h`, `core/BitmapRef.hpp`
+**C++ Reference**: `core/Bitmap.h`, `core/Bitmap.hpp`, `core/BitmapRef.hpp`, `core/YAxisOrientation.h`
 
 ## Phase 2: Edge Segments and Shape
 
