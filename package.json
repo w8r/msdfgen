@@ -1,0 +1,31 @@
+{
+  "name": "msdfgen-ts",
+  "version": "0.1.0",
+  "description": "Multi-channel Signed Distance Field Generator - TypeScript port",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:lib": "tsc --project tsconfig.lib.json",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^7.2.2",
+    "vitest": "^2.1.9"
+  },
+  "keywords": [
+    "msdf",
+    "sdf",
+    "distance-field",
+    "font",
+    "vector-graphics",
+    "typography"
+  ],
+  "author": "",
+  "license": "MIT"
+}

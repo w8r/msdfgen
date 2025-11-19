@@ -1,0 +1,22 @@
+{
+  "env": {
+    "ENABLE_BACKGROUND_TASKS": "2",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(rg:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)"
+    ],
+    "deny": [],
+    "defaultMode": "plan"
+  }
+}
