@@ -30,3 +30,4 @@ out/
 /build_xcode/
 /cmake-gen.bat
 /line-ending-check.bat
+dist

@@ -55,22 +55,24 @@ msdfgen-ts/
 
 **C++ Reference**: `core/Vector2.hpp`, `core/Projection.h`
 
-### 1.2 Distance and Range Types (Priority: HIGH)
+### 1.2 Distance and Range Types (Priority: HIGH) ✅ COMPLETED
 **Files**: `SignedDistance.ts`, `Range.ts`, `DistanceMapping.ts`
 
-- [ ] SignedDistance class
+- [x] SignedDistance class
   - distance: number (double precision)
   - dot: number (alignment indicator)
   - Comparison operators (<, >, <=, >=)
-- [ ] Range class
+- [x] Range class
   - lower, upper bounds
-  - Delta type for distance encoding
-- [ ] DistanceMapping class
+  - scale and divide operations
+- [x] DistanceMapping class
   - Maps world-space distances to pixel values
-  - distance(value): number
+  - map(value): number, mapDelta(value): number
   - inverse distance mapping
+- [x] Delta wrapper class for type safety
+- [x] 57 tests passing (21 SignedDistance, 18 Range, 18 DistanceMapping)
 
-**C++ Reference**: `core/SignedDistance.h`, `core/Range.hpp`, `core/DistanceMapping.h`
+**C++ Reference**: `core/SignedDistance.hpp`, `core/Range.hpp`, `core/DistanceMapping.h`
 
 ### 1.3 Multi-Channel Distance Types (Priority: MEDIUM)
 **Files**: `MultiDistance.ts`, `MultiAndTrueDistance.ts`
