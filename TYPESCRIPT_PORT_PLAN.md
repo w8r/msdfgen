@@ -74,16 +74,17 @@ msdfgen-ts/
 
 **C++ Reference**: `core/SignedDistance.hpp`, `core/Range.hpp`, `core/DistanceMapping.h`
 
-### 1.3 Multi-Channel Distance Types (Priority: MEDIUM)
+### 1.3 Multi-Channel Distance Types (Priority: MEDIUM) ✅ COMPLETED
 **Files**: `MultiDistance.ts`, `MultiAndTrueDistance.ts`
 
-- [ ] MultiDistance class (3-channel: R, G, B)
-  - r, g, b: SignedDistance
+- [x] MultiDistance class (3-channel: R, G, B)
+  - r, g, b: number (distance values)
   - median computation
-  - Comparison operators
-- [ ] MultiAndTrueDistance class (4-channel: R, G, B + true distance)
+  - Comparison operators (lessThan, greaterThan, etc.)
+- [x] MultiAndTrueDistance class (4-channel: R, G, B + true distance)
   - Extends MultiDistance
   - Additional alpha channel for true distance
+- [x] 59 tests passing (37 MultiDistance, 22 MultiAndTrueDistance)
 
 **C++ Reference**: `core/edge-selectors.h` (MultiDistance, MultiAndTrueDistance structs)
 
