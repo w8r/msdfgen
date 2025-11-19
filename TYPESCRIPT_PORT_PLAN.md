@@ -121,10 +121,10 @@ msdfgen-ts/
 
 ## Phase 2: Edge Segments and Shape
 
-### 2.1 Edge Color System (Priority: HIGH)
+### 2.1 Edge Color System (Priority: HIGH) ✅ COMPLETED
 **Files**: `EdgeColor.ts`
 
-- [ ] EdgeColor enum/constants
+- [x] EdgeColor enum with bitwise values
   - BLACK = 0
   - RED = 1
   - GREEN = 2
@@ -133,6 +133,14 @@ msdfgen-ts/
   - MAGENTA = 5 (RED | BLUE)
   - CYAN = 6 (GREEN | BLUE)
   - WHITE = 7 (RED | GREEN | BLUE)
+- [x] Helper functions
+  - numChannels(color): number of active channels
+  - hasRed/hasGreen/hasBlue(color): channel detection
+  - combineColors(a, b): bitwise OR
+  - intersectColors(a, b): bitwise AND
+  - complementColor(color): bitwise XOR with WHITE
+  - colorToString(color): debug string
+- [x] 28 tests passing
 
 **C++ Reference**: `core/EdgeColor.h`
 
