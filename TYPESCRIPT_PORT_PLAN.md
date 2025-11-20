@@ -20,13 +20,13 @@ Port of the MSDFGEN (Multi-channel Signed Distance Field Generator) library from
 - ✅ 2.3 EdgeSegment Hierarchy (0 tests - covered by integration)
 - ✅ 2.4 Contour and Shape (46 tests)
 
-**Phase 3: Distance Calculation Algorithms** 🚧 **IN PROGRESS** (32 tests passing)
+**Phase 3: Distance Calculation Algorithms** 🚧 **IN PROGRESS** (59 tests passing)
 - ✅ 3.1 Edge Selectors (32 tests)
-- ⏳ 3.2 Contour Combiners
+- ✅ 3.2 Contour Combiners + Scanline (27 tests)
 - ⏳ 3.3 Shape Distance Finder
-- ⏳ 3.4 Scanline System
+- ⏳ 3.4 (Merged into 3.2)
 
-**Total: 359 tests passing** | **Next: Phase 3.2 - Contour Combiners**
+**Total: 386 tests passing** | **Next: Phase 3.3 - Shape Distance Finder**
 
 ## Core Principles
 
@@ -290,19 +290,39 @@ msdfgen-ts/
 
 **C++ Reference**: `core/edge-selectors.h`
 
-### 3.2 Contour Combiners (Priority: HIGH)
-**Files**: `SimpleContourCombiner.ts`, `OverlappingContourCombiner.ts`
+### 3.2 Contour Combiners (Priority: HIGH) ✅ COMPLETED
+**Files**: `SimpleContourCombiner.ts`, `OverlappingContourCombiner.ts`, `Scanline.ts`
 
-- [ ] SimpleContourCombiner<EdgeSelectorType>
-  - Uses provided EdgeSelector
-  - Selects minimum distance across all contours
+- [x] Scanline class
+  - addIntersection(x, direction) - tracks edge crossings
+  - sort() - sorts intersections by x coordinate
+  - countWinding(x) - counts winding number at x
+  - filled(x) - determines if point is inside (non-zero winding rule)
+  - filledSequential(x) - optimized for sequential queries
+  - Used by OverlappingContourCombiner for fill detection
 
-- [ ] OverlappingContourCombiner<EdgeSelectorType>
-  - Handles overlapping contours
+- [x] EdgeSelector<T> interface
+  - Generic interface for all selector types
+  - reset(p), addEdge(distance, edge, origin, param), distance()
+  - Allows type-safe selector usage in combiners
+
+- [x] SimpleContourCombiner<T, Selector>
+  - Generic contour combiner using any EdgeSelector
+  - distance(origin, contours) - finds minimum distance across all contours
+  - No fill/winding handling - just raw minimum distance
+  - Used for simple non-overlapping shapes
+
+- [x] OverlappingContourCombiner<T, Selector>
+  - Handles overlapping/self-intersecting shapes
+  - Uses Scanline to compute fill at each query point
+  - Flips distance sign based on inside/outside status
   - Non-zero winding rule support
-  - Uses Scanline for fill computation
+  - Caches scanline per Y coordinate for performance
+  - updateScanline() - collects all edge intersections at Y
 
-**C++ Reference**: `core/contour-combiners.h`
+- [x] 27 tests passing (Scanline + combiners)
+
+**C++ Reference**: `core/contour-combiners.h`, `core/Scanline.h/cpp`
 
 ### 3.3 Shape Distance Finder (Priority: HIGH)
 **Files**: `ShapeDistanceFinder.ts`
