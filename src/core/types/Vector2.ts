@@ -60,7 +60,9 @@ export class Vector2 {
    * @param polarity If true, rotates 90° counterclockwise; if false, clockwise
    */
   getOrthogonal(polarity: boolean = true): Vector2 {
-    return polarity ? new Vector2(-this.y, this.x) : new Vector2(this.y, -this.x);
+    return polarity
+      ? new Vector2(-this.y, this.x)
+      : new Vector2(this.y, -this.x);
   }
 
   /**
@@ -68,7 +70,10 @@ export class Vector2 {
    * @param polarity If true, rotates 90° counterclockwise; if false, clockwise
    * @param allowZero If false and vector is zero, returns a unit vector instead of zero
    */
-  getOrthonormal(polarity: boolean = true, allowZero: boolean = false): Vector2 {
+  getOrthonormal(
+    polarity: boolean = true,
+    allowZero: boolean = false,
+  ): Vector2 {
     const len = this.length();
     if (len !== 0) {
       return polarity
@@ -104,8 +109,16 @@ export class Vector2 {
   /**
    * Returns a new vector that is the difference of this and another.
    */
-  sub(other: Vector2): Vector2 {
+  subtract(other: Vector2): Vector2 {
     return new Vector2(this.x - other.x, this.y - other.y);
+  }
+
+  /**
+   * Returns a new vector that is the difference of this and another.
+   * Alias for sub() for better readability.
+   */
+  sub(other: Vector2): Vector2 {
+    return this.subtract(other);
   }
 
   /**
@@ -127,6 +140,14 @@ export class Vector2 {
    */
   scale(value: number): Vector2 {
     return new Vector2(this.x * value, this.y * value);
+  }
+
+  /**
+   * Returns a new vector scaled by a scalar value.
+   * Alias for scale() for better readability.
+   */
+  multiply(value: number): Vector2 {
+    return this.scale(value);
   }
 
   /**
@@ -168,7 +189,7 @@ export class Vector2 {
 /**
  * A vector may also represent a point, which shall be differentiated semantically using the alias Point2.
  */
-export type Point2 = Vector2
+export type Point2 = Vector2;
 
 /**
  * Dot product of two vectors.
@@ -186,14 +207,36 @@ export function crossProduct(a: Vector2, b: Vector2): number {
 }
 
 /**
+ * Linear interpolation between two numbers.
+ * @param a Start value
+ * @param b End value
+ * @param t Interpolation factor (0 = a, 1 = b)
+ */
+export function mix(a: number, b: number, t: number): number;
+
+/**
  * Linear interpolation between two vectors.
  * @param a Start vector
  * @param b End vector
  * @param t Interpolation factor (0 = a, 1 = b)
  */
-export function mix(a: Vector2, b: Vector2, t: number): Vector2 {
-  return new Vector2(
-    a.x + t * (b.x - a.x),
-    a.y + t * (b.y - a.y),
+export function mix(a: Vector2, b: Vector2, t: number): Vector2;
+
+/**
+ * Implementation of linear interpolation for both numbers and vectors
+ */
+export function mix(
+  a: number | Vector2,
+  b: number | Vector2,
+  t: number,
+): number | Vector2 {
+  if (typeof a === 'number' && typeof b === 'number') {
+    return a + t * (b - a);
+  }
+  if (a instanceof Vector2 && b instanceof Vector2) {
+    return new Vector2(a.x + t * (b.x - a.x), a.y + t * (b.y - a.y));
+  }
+  throw new Error(
+    'mix(): Both arguments must be of the same type (number or Vector2)',
   );
 }

@@ -159,50 +159,43 @@ msdfgen-ts/
 
 **C++ Reference**: `core/equation-solver.h`, `core/equation-solver.cpp`
 
-### 2.3 EdgeSegment Hierarchy (Priority: HIGH) 🚧 IN PROGRESS
+### 2.3 EdgeSegment Hierarchy (Priority: HIGH) ✅ COMPLETED
 **Files**: `EdgeSegment.ts`, `LinearSegment.ts`, `QuadraticSegment.ts`, `CubicSegment.ts`
 
-- [ ] EdgeSegment abstract base class
-  - color: EdgeColor
-  - point(param: number): Point2
-  - direction(param: number): Vector2
-  - directionChange(param: number): Vector2
-  - signedDistance(origin: Point2): {distance: SignedDistance, param: number}
-  - distanceToPerpendicularDistance(...)
-  - length(): number
-  - bound(): {xMin, yMin, xMax, yMax}
-  - scanlineIntersections(y: number): {x: number, dy: number}[]
-  - clone(): EdgeSegment
-  - reverse(): void
+- [x] EdgeSegment abstract base class
+  - color: EdgeColor property
+  - point(t): Point2 - Bezier evaluation
+  - direction(t): Vector2 - First derivative/tangent
+  - directionChange(t): Vector2 - Second derivative
+  - signedDistance(origin): {distance, param} - Closest point search
+  - distanceToPerpendicularDistance() - Optional conversion
+  - length(): number - Arc length
+  - bound(): BoundingBox - Axis-aligned bounding box
+  - scanlineIntersections(y): ScanlineIntersection[] - Horizontal line crossings
+  - clone(), reverse(), moveStartPoint(), moveEndPoint()
   - splitInThirds(): [EdgeSegment, EdgeSegment, EdgeSegment]
 
-- [ ] LinearSegment extends EdgeSegment
-  - p[2]: Point2[] (start, end)
-  - Implements all abstract methods
+- [x] LinearSegment extends EdgeSegment
+  - p: [Point2, Point2] (start, end)
+  - Direct geometric distance calculation
+  - Orthogonal distance for interior points
+  - Endpoint distance with dot product alignment
 
-- [ ] QuadraticSegment extends EdgeSegment
-  - p[3]: Point2[] (start, control, end)
-  - Bezier quadratic curve implementation
-  - Uses quadratic equation solver
+- [x] QuadraticSegment extends EdgeSegment
+  - p: [Point2, Point2, Point2] (start, control, end)
+  - Quadratic Bezier curve implementation
+  - Uses cubic equation solver for signed distance
+  - Extrema detection for bounding box
+  - de Casteljau subdivision for splitInThirds()
 
-- [ ] CubicSegment extends EdgeSegment
-  - p[4]: Point2[] (start, control1, control2, end)
-  - Bezier cubic curve implementation
-  - Iterative closest point search (4 starts × 4 refinement steps)
+- [x] CubicSegment extends EdgeSegment
+  - p: [Point2, Point2, Point2, Point2] (start, control1, control2, end)
+  - Cubic Bezier curve implementation
+  - Iterative Newton-Raphson search (4 starts × 4 refinement steps)
+  - Derivative-based extrema for tight bounding boxes
+  - Approximate length via adaptive subdivision
 
-**C++ Reference**: `core/edge-segments.h`, `core/edge-segments.cpp`
-
-### 2.3 Equation Solvers (Priority: HIGH)
-**Files**: `equation-solver.ts`
-
-- [ ] solveQuadratic(a, b, c): number[]
-  - Returns 0-2 solutions
-  - Handles edge cases (a=0, discriminant)
-- [ ] solveCubic(a, b, c, d): number[]
-  - Returns 0-3 solutions
-  - Cardano's formula with numerical stability
-
-**C++ Reference**: `core/equation-solver.h`, `core/equation-solver.cpp`
+**C++ Reference**: `core/edge-segments.h`, `core/edge-segments.cpp` (500+ lines)
 
 ### 2.4 Contour and Shape (Priority: HIGH)
 **Files**: `Contour.ts`, `Shape.ts`, `EdgeHolder.ts`
