@@ -144,7 +144,22 @@ msdfgen-ts/
 
 **C++ Reference**: `core/EdgeColor.h`
 
-### 2.2 EdgeSegment Hierarchy (Priority: HIGH)
+### 2.2 Equation Solvers (Priority: HIGH) ✅ COMPLETED
+**Files**: `equation-solver.ts`
+
+- [x] solveQuadratic(a, b, c): number[]
+  - Handles linear fallback when a ≈ 0
+  - Returns 0-2 real roots
+  - Numerical stability for edge cases
+- [x] solveCubic(a, b, c, d): number[]
+  - Cardano's formula with trigonometric method
+  - Returns 0-3 real roots
+  - Falls back to quadratic for stability
+- [x] 28 tests passing (comprehensive coverage)
+
+**C++ Reference**: `core/equation-solver.h`, `core/equation-solver.cpp`
+
+### 2.3 EdgeSegment Hierarchy (Priority: HIGH) 🚧 IN PROGRESS
 **Files**: `EdgeSegment.ts`, `LinearSegment.ts`, `QuadraticSegment.ts`, `CubicSegment.ts`
 
 - [ ] EdgeSegment abstract base class
