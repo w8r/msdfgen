@@ -1,5 +1,6 @@
 import type { Point2, Vector2 } from '../types/Vector2';
-import type { SignedDistance } from '../types/SignedDistance';
+import { dotProduct, crossProduct } from '../types/Vector2';
+import { SignedDistance } from '../types/SignedDistance';
 import { EdgeColor } from './EdgeColor';
 
 /**
@@ -95,18 +96,32 @@ export abstract class EdgeSegment {
 
   /**
    * Converts a signed distance to perpendicular distance.
-   * Can be overridden for specific edge types.
+   * For linear segments, this returns the orthogonal distance.
+   * For curves, this can differ from true distance at endpoints.
    * @param distance - The signed distance to convert
    * @param origin - The origin point
    * @param param - Parameter where the distance was measured
+   * @returns The perpendicular distance, or the original distance if not applicable
    */
   distanceToPerpendicularDistance(
-    _distance: SignedDistance,
-    _origin: Point2,
-    _param: number,
-  ): void {
-    // Default implementation does nothing
-    // Can be overridden by subclasses if needed
+    distance: SignedDistance,
+    origin: Point2,
+    param: number,
+  ): SignedDistance {
+    // Default implementation: if the closest point is at an endpoint (param 0 or 1),
+    // compute perpendicular distance to the tangent line at that endpoint
+    if (param < 0.0001 || param > 0.9999) {
+      const dir = param < 0.5 ? this.direction(0) : this.direction(1);
+      const dirNorm = dir.normalize(true);
+      const aq = origin.subtract(this.point(param));
+      const ts = dotProduct(aq, dirNorm);
+      const pseudoDistance = crossProduct(aq, dirNorm);
+
+      if (Math.abs(pseudoDistance) < Math.abs(distance.distance)) {
+        return new SignedDistance(pseudoDistance, ts);
+      }
+    }
+    return distance;
   }
 
   /**

@@ -6,6 +6,28 @@ Port of the MSDFGEN (Multi-channel Signed Distance Field Generator) library from
 
 **Target**: High-quality, type-safe TypeScript library for generating distance fields from vector shapes and fonts.
 
+## Current Progress
+
+**Phase 1: Core Data Structures** ✅ **COMPLETED** (225 tests passing)
+- ✅ 1.1 Basic Geometry (55 tests)
+- ✅ 1.2 Distance and Range Types (57 tests)
+- ✅ 1.3 Multi-Channel Distance Types (59 tests)
+- ✅ 1.4 Bitmap System (54 tests)
+
+**Phase 2: Edge Segments and Shape** ✅ **COMPLETED** (102 tests passing)
+- ✅ 2.1 Edge Color System (28 tests)
+- ✅ 2.2 Equation Solvers (28 tests)
+- ✅ 2.3 EdgeSegment Hierarchy (0 tests - covered by integration)
+- ✅ 2.4 Contour and Shape (46 tests)
+
+**Phase 3: Distance Calculation Algorithms** 🚧 **IN PROGRESS** (32 tests passing)
+- ✅ 3.1 Edge Selectors (32 tests)
+- ⏳ 3.2 Contour Combiners
+- ⏳ 3.3 Shape Distance Finder
+- ⏳ 3.4 Scanline System
+
+**Total: 359 tests passing** | **Next: Phase 3.2 - Contour Combiners**
+
 ## Core Principles
 
 1. **Single-threaded execution** - No parallelism complexity, simpler debugging
@@ -197,53 +219,74 @@ msdfgen-ts/
 
 **C++ Reference**: `core/edge-segments.h`, `core/edge-segments.cpp` (500+ lines)
 
-### 2.4 Contour and Shape (Priority: HIGH)
+### 2.4 Contour and Shape (Priority: HIGH) ✅ COMPLETED
 **Files**: `Contour.ts`, `Shape.ts`, `EdgeHolder.ts`
 
-- [ ] EdgeHolder wrapper
+- [x] EdgeHolder wrapper
   - Holds EdgeSegment reference
   - Provides indirection (like C++ pointer)
+  - Multiple constructors (empty, segment, 2-4 points for linear/quadratic/cubic)
+  - get(), set(), getOrThrow(), hasEdge()
+  - static swap(a, b) for array reversal
 
-- [ ] Contour class
+- [x] Contour class
   - edges: EdgeHolder[]
-  - addEdge(segment: EdgeSegment): void
-  - bound(): {xMin, yMin, xMax, yMax}
-  - winding(): number (orientation detection)
+  - addEdge(holder), addEmptyEdge()
+  - bound(): BoundingBox (union of all edge bounds)
+  - boundMiters(border, miterLimit, polarity): BoundingBox for mitered corners
+  - winding(): number (shoelace formula for orientation: 1=CCW, -1=CW, 0=degenerate)
+  - reverse(): void (reverses edge order and individual edges)
 
-- [ ] Shape class
+- [x] Shape class
   - contours: Contour[]
   - inverseYAxis: boolean
-  - addContour(contour: Contour): void
-  - normalize(): void (ensures proper orientation)
-  - bound(): {xMin, yMin, xMax, yMax}
-  - getBounds(border: number): {l, b, r, t}
+  - addContour(contour), addEmptyContour()
+  - normalize(): void (ensures all contours have positive winding)
+  - bound(): BoundingBox (union of all contour bounds)
+  - boundMiters(border, miterLimit, polarity): BoundingBox
+  - getBounds(border): {l, b, r, t}
   - getYAxisOrientation(): YAxisOrientation
+  - validate(): boolean (checks shape has valid contours)
+
+- [x] 46 tests passing (EdgeHolder, Contour, Shape)
 
 **C++ Reference**: `core/Contour.h`, `core/Shape.h`, `core/Shape.cpp`
 
 ## Phase 3: Distance Calculation Algorithms
 
-### 3.1 Edge Selectors (Priority: HIGH)
-**Files**: `TrueDistanceSelector.ts`, `PerpendicularDistanceSelector.ts`, `MultiDistanceSelector.ts`
+### 3.1 Edge Selectors (Priority: HIGH) ✅ COMPLETED
+**Files**: `TrueDistanceSelector.ts`, `PerpendicularDistanceSelector.ts`, `MultiDistanceSelector.ts`, `MultiAndTrueDistanceSelector.ts`
 
-- [ ] TrueDistanceSelector
+- [x] TrueDistanceSelector
   - DistanceType = SignedDistance
-  - distance(minDistance, edge, origin, param): void
-  - merge(a, b): SignedDistance
-  - EdgeCache structure for optimization
+  - reset(p): void - resets selector state
+  - addEdge(distance, edge, origin, param): void - considers an edge
+  - distance(): SignedDistance - returns minimum distance
+  - static merge(a, b): SignedDistance - merges two distances
+  - EdgeCache structure for optimization (point, absDistance)
+  - getCached(edge): EdgeCache - retrieves cached distance
 
-- [ ] PerpendicularDistanceSelector
-  - Like TrueDistanceSelector
-  - Calls distanceToPerpendicularDistance after finding nearest edge
+- [x] PerpendicularDistanceSelector
+  - Like TrueDistanceSelector but converts to perpendicular distance
+  - Calls distanceToPerpendicularDistance() on each edge
+  - Same interface: reset, addEdge, distance, merge, getCached
+  - Falls back to true distance if perpendicular conversion unavailable
 
-- [ ] MultiDistanceSelector
-  - DistanceType = MultiDistance
-  - Tracks distance per color channel
-  - merge(a, b): MultiDistance
+- [x] MultiDistanceSelector
+  - DistanceType = MultiDistance (r, g, b channels)
+  - Tracks minimum distance per color channel independently
+  - addEdge() updates channels based on edge color (bitwise AND with EdgeColor)
+  - distance(): MultiDistance - returns per-channel distances
+  - static merge(a, b): MultiDistance - minimum per channel
 
-- [ ] MultiAndTrueDistanceSelector
-  - DistanceType = MultiAndTrueDistance
-  - Combines multi-channel + true distance
+- [x] MultiAndTrueDistanceSelector
+  - DistanceType = MultiAndTrueDistance (r, g, b, a channels)
+  - Combines multi-channel (RGB) + true distance (alpha)
+  - Alpha channel tracks overall minimum regardless of color
+  - RGB channels track color-specific minimums
+  - static merge(a, b): MultiAndTrueDistance - minimum per channel
+
+- [x] 32 tests passing (comprehensive edge selector coverage)
 
 **C++ Reference**: `core/edge-selectors.h`
 
