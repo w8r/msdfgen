@@ -5,3 +5,4 @@ export { MultiAndTrueDistanceSelector } from './MultiAndTrueDistanceSelector';
 export { Scanline } from './Scanline';
 export { SimpleContourCombiner, type EdgeSelector } from './SimpleContourCombiner';
 export { OverlappingContourCombiner } from './OverlappingContourCombiner';
+export { ShapeDistanceFinder, createShapeDistanceFinder, type ContourCombiner } from './ShapeDistanceFinder';

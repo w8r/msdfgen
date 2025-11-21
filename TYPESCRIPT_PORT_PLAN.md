@@ -20,13 +20,12 @@ Port of the MSDFGEN (Multi-channel Signed Distance Field Generator) library from
 - ✅ 2.3 EdgeSegment Hierarchy (0 tests - covered by integration)
 - ✅ 2.4 Contour and Shape (46 tests)
 
-**Phase 3: Distance Calculation Algorithms** 🚧 **IN PROGRESS** (59 tests passing)
+**Phase 3: Distance Calculation Algorithms** ✅ **COMPLETED** (72 tests passing)
 - ✅ 3.1 Edge Selectors (32 tests)
 - ✅ 3.2 Contour Combiners + Scanline (27 tests)
-- ⏳ 3.3 Shape Distance Finder
-- ⏳ 3.4 (Merged into 3.2)
+- ✅ 3.3 Shape Distance Finder (13 tests)
 
-**Total: 386 tests passing** | **Next: Phase 3.3 - Shape Distance Finder**
+**Total: 399 tests passing** | **Next: Phase 4 - Edge Coloring**
 
 ## Core Principles
 
@@ -324,27 +323,30 @@ msdfgen-ts/
 
 **C++ Reference**: `core/contour-combiners.h`, `core/Scanline.h/cpp`
 
-### 3.3 Shape Distance Finder (Priority: HIGH)
+### 3.3 Shape Distance Finder (Priority: HIGH) ✅ COMPLETED
 **Files**: `ShapeDistanceFinder.ts`
 
-- [ ] ShapeDistanceFinder<ContourCombiner>
-  - Constructor(shape: Shape)
-  - distance(origin: Point2): DistanceType
-  - Edge cache per contour for optimization
-  - Static oneShotDistance() for single queries
+- [x] ContourCombiner<T> interface
+  - Generic interface for any combiner type
+  - distance(origin, contours), reset(p)
+  - Allows type-safe combiner usage
+
+- [x] ShapeDistanceFinder<T, Combiner>
+  - High-level API for shape distance queries
+  - Constructor(shape, combinerFactory)
+  - distance(origin): T - computes distance using combiner
+  - reset(p) - resets combiner state
+  - getShape(), getCombiner() - accessors
+  - Works with any combiner (Simple or Overlapping)
+  - Works with any selector (True, Perpendicular, Multi, MultiAndTrue)
+
+- [x] Static methods
+  - oneShotDistance(shape, origin, combinerFactory) - one-shot queries
+  - createShapeDistanceFinder(shape, combinerFactory) - convenience factory
+
+- [x] 13 tests passing (comprehensive coverage)
 
 **C++ Reference**: `core/ShapeDistanceFinder.h`, `core/ShapeDistanceFinder.hpp`
-
-### 3.4 Scanline System (Priority: MEDIUM)
-**Files**: `Scanline.ts`
-
-- [ ] Scanline class
-  - Tracks horizontal line intersections with contours
-  - Computes fill using winding numbers
-  - filled(): boolean (determines if point is inside shape)
-  - lastIndex optimization for sequential queries
-
-**C++ Reference**: `core/Scanline.h`, `core/Scanline.cpp`
 
 ## Phase 4: Edge Coloring
 
