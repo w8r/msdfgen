@@ -72,7 +72,7 @@ export class Vector2 {
    */
   getOrthonormal(
     polarity: boolean = true,
-    allowZero: boolean = false,
+    allowZero: boolean = false
   ): Vector2 {
     const len = this.length();
     if (len !== 0) {
@@ -228,15 +228,15 @@ export function mix(a: Vector2, b: Vector2, t: number): Vector2;
 export function mix(
   a: number | Vector2,
   b: number | Vector2,
-  t: number,
+  t: number
 ): number | Vector2 {
-  if (typeof a === 'number' && typeof b === 'number') {
+  if (typeof a === "number" && typeof b === "number") {
     return a + t * (b - a);
   }
   if (a instanceof Vector2 && b instanceof Vector2) {
     return new Vector2(a.x + t * (b.x - a.x), a.y + t * (b.y - a.y));
   }
   throw new Error(
-    'mix(): Both arguments must be of the same type (number or Vector2)',
+    "mix(): Both arguments must be of the same type (number or Vector2)"
   );
 }

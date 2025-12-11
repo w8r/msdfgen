@@ -1,4 +1,4 @@
-import { Vector2, Point2 } from './Vector2';
+import { Vector2, type Point2 } from "./Vector2";
 
 /**
  * A transformation from shape coordinates to pixel coordinates.

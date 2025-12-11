@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MSDFGEN TypeScript Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        color: #888;
+        font-size: 1.1em;
+      }
+
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+        padding: 20px;
+        background: #2a2a2a;
+        border-radius: 10px;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .stat-label {
+        color: #888;
+        font-size: 0.9em;
+        margin-top: 5px;
+      }
+
+      .shapes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .shape-card {
+        background: #2a2a2a;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      .shape-card h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: #667eea;
+      }
+
+      .shape-description {
+        color: #888;
+        font-size: 0.9em;
+        margin-bottom: 15px;
+      }
+
+      .canvas-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .canvas-container {
+        background: #1a1a1a;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .canvas-label {
+        font-size: 0.8em;
+        color: #888;
+        margin-bottom: 5px;
+      }
+
+      canvas {
+        width: 100%;
+        height: auto;
+        border-radius: 3px;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+
+      .info-section {
+        background: #2a2a2a;
+        border-radius: 10px;
+        padding: 30px;
+        margin-top: 40px;
+      }
+
+      .info-section h2 {
+        color: #667eea;
+        margin-bottom: 15px;
+      }
+
+      .info-section p {
+        line-height: 1.6;
+        color: #b0b0b0;
+        margin-bottom: 10px;
+      }
+
+      .algorithm-comparison {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .algorithm-card {
+        background: #1a1a1a;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 3px solid #667eea;
+      }
+
+      .algorithm-card h3 {
+        color: #667eea;
+        margin-bottom: 10px;
+      }
+
+      .algorithm-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .algorithm-card li {
+        padding: 5px 0;
+        color: #888;
+      }
+
+      .algorithm-card li:before {
+        content: "→ ";
+        color: #667eea;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.2em;
+        color: #888;
+      }
+
+      .error {
+        background: #ff4444;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 60px;
+        padding: 20px;
+        color: #666;
+        border-top: 1px solid #333;
+      }
+
+      footer a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>MSDFGEN TypeScript</h1>
+        <p class="subtitle">Multi-channel Signed Distance Field Generator</p>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value" id="test-count">438</div>
+            <div class="stat-label">Tests Passing</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="shape-count">0</div>
+            <div class="stat-label">Demo Shapes</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="generation-time">0ms</div>
+            <div class="stat-label">Generation Time</div>
+          </div>
+        </div>
+      </header>
+
+      <div id="loading" class="loading">Loading demo...</div>
+      <div id="error-container"></div>
+      <div
+        id="shapes-container"
+        class="shapes-grid"
+        style="display: none"
+      ></div>
+
+      <div class="info-section">
+        <h2>About Distance Fields</h2>
+        <p>
+          Signed Distance Fields (SDFs) represent shapes by storing the distance
+          from each pixel to the nearest edge of the shape. Pixels inside the
+          shape have positive distance, pixels outside have negative distance,
+          and pixels on the edge are zero.
+        </p>
+
+        <div class="algorithm-comparison">
+          <div class="algorithm-card">
+            <h3>SDF (Single Channel)</h3>
+            <ul>
+              <li>Classic signed distance field</li>
+              <li>Stores true Euclidean distance</li>
+              <li>Good for simple shapes</li>
+              <li>Corners can appear rounded</li>
+            </ul>
+          </div>
+
+          <div class="algorithm-card">
+            <h3>PSDF (Perpendicular)</h3>
+            <ul>
+              <li>Uses perpendicular distance</li>
+              <li>Better for straight edges</li>
+              <li>Different behavior at corners</li>
+              <li>Faster computation</li>
+            </ul>
+          </div>
+
+          <div class="algorithm-card">
+            <h3>MSDF (Multi-Channel)</h3>
+            <ul>
+              <li>3 channels (RGB)</li>
+              <li>Preserves sharp corners</li>
+              <li>Requires edge coloring</li>
+              <li>Best quality for text</li>
+            </ul>
+          </div>
+
+          <div class="algorithm-card">
+            <h3>MTSDF (Multi + True)</h3>
+            <ul>
+              <li>4 channels (RGBA)</li>
+              <li>Combines MSDF + true distance</li>
+              <li>Alpha stores standard SDF</li>
+              <li>Most versatile</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          TypeScript port of
+          <a href="https://github.com/Chlumsky/msdfgen" target="_blank"
+            >MSDFGEN</a
+          >
+          by Viktor Chlumský<br />
+        </p>
+      </footer>
+    </div>
+
+    <script type="module" src="./demo-browser.ts"></script>
+  </body>
+</html>
