@@ -32,10 +32,10 @@ export async function decompressWoff2(buffer: ArrayBuffer): Promise<ArrayBuffer>
     // Dynamic import - only loads wawoff2 when actually decompressing WOFF2
     const wawoff2 = await import('wawoff2');
     const decompressed = await wawoff2.decompress(new Uint8Array(buffer));
-    return decompressed.buffer.slice(
-      decompressed.byteOffset,
-      decompressed.byteOffset + decompressed.byteLength,
-    );
+    // Create a new ArrayBuffer copy to avoid SharedArrayBuffer type issues
+    const result = new ArrayBuffer(decompressed.byteLength);
+    new Uint8Array(result).set(decompressed);
+    return result;
   } catch (error) {
     if (
       (error as Error).message?.includes('Cannot find module') ||
