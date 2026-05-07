@@ -2,11 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": false,
+    "allowImportingTsExtensions": false,
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
     "rootDir": "./src"
   },
   "include": ["src"],
-  "exclude": ["src/**/*.test.ts", "src/main.ts"]
+  "exclude": ["src/**/*.test.ts", "src/main.ts", "src/test-fixtures/**"]
 }

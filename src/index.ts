@@ -10,3 +10,6 @@ export { Projection } from "./core/types/Projection";
 export { SignedDistance } from "./core/types/SignedDistance";
 export { Range } from "./core/types/Range";
 export { DistanceMapping, Delta } from "./core/types/DistanceMapping";
+
+// Font parsing
+export * from './font';
