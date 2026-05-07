@@ -1,17 +1,24 @@
 import type { Font, Glyph, FontMetrics, GlyphMetrics } from './types';
 import { glyphPathToShape, type PathCommand } from './GlyphConverter';
 import { Shape } from '../core/shape/Shape';
+import { isWoff2, decompressWoff2 } from './woff2';
 
 /**
  * Parse a font file buffer and return a Font object
- * @param buffer - ArrayBuffer containing TTF or OTF font data
+ * @param buffer - ArrayBuffer containing TTF, OTF, or WOFF2 font data
  * @returns Promise resolving to Font object
  * @throws Error if opentype.js is not installed or font parsing fails
  */
 export async function parseFont(buffer: ArrayBuffer): Promise<Font> {
+  // Check for WOFF2 and decompress if needed
+  let fontBuffer = buffer;
+  if (isWoff2(buffer)) {
+    fontBuffer = await decompressWoff2(buffer);
+  }
+
   // Dynamic import to make opentype.js optional
   const opentype = await import('opentype.js');
-  const otFont = opentype.parse(buffer);
+  const otFont = opentype.parse(fontBuffer);
 
   return new OpentypeFont(otFont);
 }
