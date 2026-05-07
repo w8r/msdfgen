@@ -7,7 +7,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Font Parser Integration** - Load font files and convert glyphs to Shape objects
+- [x] **Phase 1: Font Parser Integration** - Load font files and convert glyphs to Shape objects
 - [ ] **Phase 2: Atlas Generation** - Generate MSDF atlas with glyph metrics and packing
 - [ ] **Phase 3: WebGPU Interactive Demo** - Render text with WebGPU, add interactivity and visualization
 
@@ -33,8 +33,8 @@
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md - Core font parsing and glyph-to-Shape conversion
-- [ ] 01-02-PLAN.md - WOFF2 support and comprehensive testing
+- [x] 01-01-PLAN.md - Core font parsing and glyph-to-Shape conversion
+- [x] 01-02-PLAN.md - WOFF2 support and comprehensive testing
 
 ---
 
@@ -102,7 +102,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Font Parser Integration | 0/2 | Planned | - |
+| 1. Font Parser Integration | 2/2 | Complete | 2026-05-07 |
 | 2. Atlas Generation | 0/? | Not started | - |
 | 3. WebGPU Interactive Demo | 0/? | Not started | - |
 
@@ -148,5 +148,5 @@ Plans:
 ---
 
 *Roadmap created: 2026-05-06*
-*Phase 1 planned: 2026-05-07*
-*Next step: `/gsd:execute-phase 1` to implement Font Parser Integration*
+*Phase 1 completed: 2026-05-07*
+*Next step: `/gsd:plan-phase 2` to plan Atlas Generation phase*

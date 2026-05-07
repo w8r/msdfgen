@@ -9,7 +9,7 @@
 
 - [x] **FONT-01**: Library can load TTF font files and extract glyph outlines
 - [x] **FONT-02**: Library can load OTF font files and extract glyph outlines
-- [ ] **FONT-03**: Library can load WOFF2 font files (with Brotli decompression)
+- [x] **FONT-03**: Library can load WOFF2 font files (with Brotli decompression)
 - [x] **FONT-04**: Library extracts font metrics (ascender, descender, units per em)
 - [x] **FONT-05**: Library converts glyph outlines to Shape objects compatible with MSDF generator
 
@@ -46,8 +46,8 @@
 
 - [ ] **QUAL-01**: Demo displays generation time for atlas
 - [ ] **QUAL-02**: Demo displays current FPS
-- [ ] **QUAL-03**: Core distance calculations have unit test coverage
-- [ ] **QUAL-04**: Font parsing has unit test coverage for edge cases
+- [x] **QUAL-03**: Core distance calculations have unit test coverage
+- [x] **QUAL-04**: Font parsing has unit test coverage for edge cases
 - [x] **QUAL-05**: Library has zero runtime dependencies (font parser allowed as optional peer dep)
 
 ## v2 Requirements
@@ -88,7 +88,7 @@
 |-------------|-------|--------|
 | FONT-01 | Phase 1 | Complete |
 | FONT-02 | Phase 1 | Complete |
-| FONT-03 | Phase 1 | Pending |
+| FONT-03 | Phase 1 | Complete |
 | FONT-04 | Phase 1 | Complete |
 | FONT-05 | Phase 1 | Complete |
 | MSDF-01 | Phase 2 | Pending |
@@ -110,8 +110,8 @@
 | VIS-03 | Phase 3 | Pending |
 | QUAL-01 | Phase 3 | Pending |
 | QUAL-02 | Phase 3 | Pending |
-| QUAL-03 | Phase 1 | Pending |
-| QUAL-04 | Phase 1 | Pending |
+| QUAL-03 | Phase 1 | Complete |
+| QUAL-04 | Phase 1 | Complete |
 | QUAL-05 | Phase 1 | Complete |
 
 **Coverage:**
@@ -121,4 +121,4 @@
 
 ---
 *Requirements defined: 2026-05-04*
-*Last updated: 2026-05-06 after adding pretext requirement*
+*Last updated: 2026-05-07 - Phase 1 complete (FONT-01-05, QUAL-03-05)*
