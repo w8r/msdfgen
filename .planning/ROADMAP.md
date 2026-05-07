@@ -30,7 +30,7 @@
 4. Font metrics (unitsPerEm, ascender, descender) are correctly extracted and accessible
 5. Unit tests verify font parsing with diverse character sets ("8", "B", "M", accented chars) across multiple fonts
 
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 01-01-PLAN.md - Core font parsing and glyph-to-Shape conversion
@@ -44,18 +44,19 @@ Plans:
 
 **Depends on:** Phase 1 (requires font parsing and glyph-to-Shape conversion)
 
-**Requirements:**
-- MSDF-01: Library generates MSDF atlas for a set of glyphs on demand
-- MSDF-02: Library stores glyph metrics (bearing, advance, atlas position) alongside atlas
-- MSDF-03: Atlas generation completes in <100ms for typical character sets (A-Z, a-z, 0-9, punctuation)
+**Requirements:** [MSDF-01, MSDF-02, MSDF-03]
 
 **Success Criteria** (what must be TRUE):
 1. User can request an atlas for a character set and receive a single texture containing all glyphs
 2. Each glyph in the atlas has associated metrics (UV coordinates, bearing, advance width) accessible via API
 3. Atlas generation for standard ASCII character set (A-Z, a-z, 0-9, punctuation) completes in <100ms
-4. Atlas uses shelf-packing with proper padding to prevent glyph bleeding at texture boundaries
+4. Atlas uses potpack bin packing with proper padding to prevent glyph bleeding at texture boundaries
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md - Types, AtlasGenerator implementation with potpack
+- [ ] 02-02-PLAN.md - Comprehensive tests and performance verification
 
 ---
 
@@ -102,8 +103,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Font Parser Integration | 2/2 | Complete | 2026-05-07 |
-| 2. Atlas Generation | 0/? | Not started | - |
+| 1. Font Parser Integration | 2/2 | Complete    | 2026-05-07 |
+| 2. Atlas Generation | 0/2 | Planned | - |
 | 3. WebGPU Interactive Demo | 0/? | Not started | - |
 
 ---
@@ -149,4 +150,5 @@ Plans:
 
 *Roadmap created: 2026-05-06*
 *Phase 1 completed: 2026-05-07*
-*Next step: `/gsd:plan-phase 2` to plan Atlas Generation phase*
+*Phase 2 planned: 2026-05-07*
+*Next step: `/gsd:execute-phase 02`*
