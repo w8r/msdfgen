@@ -21,11 +21,11 @@
 
 ### WebGPU Rendering
 
-- [ ] **GPU-01**: Demo renders text using WebGPU with standard MSDF shader (median RGB + smoothstep)
-- [ ] **GPU-02**: Demo uses instanced quad rendering for efficient text display
-- [ ] **GPU-03**: Text remains sharp at any zoom level (scale-aware smoothing)
-- [ ] **GPU-04**: Demo displays helpful error when WebGPU is not supported
-- [ ] **GPU-05**: Demo uses pretext (chenglou/pretext) for text layout and positioning
+- [x] **GPU-01**: Demo renders text using WebGPU with standard MSDF shader (median RGB + smoothstep)
+- [x] **GPU-02**: Demo uses instanced quad rendering for efficient text display
+- [x] **GPU-03**: Text remains sharp at any zoom level (scale-aware smoothing)
+- [x] **GPU-04**: Demo displays helpful error when WebGPU is not supported
+- [x] **GPU-05**: Demo uses pretext (chenglou/pretext) for text layout and positioning
 
 ### Interactivity
 
@@ -38,9 +38,9 @@
 
 ### Visualization
 
-- [ ] **VIS-01**: User can toggle distance field visualization (show raw MSDF data vs rendered text)
+- [x] **VIS-01**: User can toggle distance field visualization (show raw MSDF data vs rendered text)
 - [ ] **VIS-02**: User can view the generated glyph atlas texture
-- [ ] **VIS-03**: User can toggle heatmap mode (color-coded distance gradient)
+- [x] **VIS-03**: User can toggle heatmap mode (color-coded distance gradient)
 
 ### Quality
 
@@ -94,20 +94,20 @@
 | MSDF-01 | Phase 2 | Complete |
 | MSDF-02 | Phase 2 | Complete |
 | MSDF-03 | Phase 2 | Complete |
-| GPU-01 | Phase 3 | Pending |
-| GPU-02 | Phase 3 | Pending |
-| GPU-03 | Phase 3 | Pending |
-| GPU-04 | Phase 3 | Pending |
-| GPU-05 | Phase 3 | Pending |
+| GPU-01 | Phase 3 | Complete |
+| GPU-02 | Phase 3 | Complete |
+| GPU-03 | Phase 3 | Complete |
+| GPU-04 | Phase 3 | Complete |
+| GPU-05 | Phase 3 | Complete |
 | INT-01 | Phase 3 | Pending |
 | INT-02 | Phase 3 | Pending |
 | INT-03 | Phase 3 | Pending |
 | INT-04 | Phase 3 | Pending |
 | INT-05 | Phase 3 | Pending |
 | INT-06 | Phase 3 | Pending |
-| VIS-01 | Phase 3 | Pending |
+| VIS-01 | Phase 3 | Complete |
 | VIS-02 | Phase 3 | Pending |
-| VIS-03 | Phase 3 | Pending |
+| VIS-03 | Phase 3 | Complete |
 | QUAL-01 | Phase 3 | Pending |
 | QUAL-02 | Phase 3 | Pending |
 | QUAL-03 | Phase 1 | Complete |
@@ -121,4 +121,4 @@
 
 ---
 *Requirements defined: 2026-05-04*
-*Last updated: 2026-05-11 - Phase 2 complete (MSDF-01-03)*
+*Last updated: 2026-05-11 - Phase 3 Plan 01 complete (GPU-01-05, VIS-01, VIS-03)*

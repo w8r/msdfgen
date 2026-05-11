@@ -9,7 +9,7 @@
 
 - [x] **Phase 1: Font Parser Integration** - Load font files and convert glyphs to Shape objects
 - [x] **Phase 2: Atlas Generation** - Generate MSDF atlas with glyph metrics and packing
-- [ ] **Phase 3: WebGPU Interactive Demo** - Render text with WebGPU, add interactivity and visualization
+- [ ] **Phase 3: WebGPU Interactive Demo** - Render text with WebGPU, add interactivity and visualization (1/3 plans complete)
 
 ---
 
@@ -96,7 +96,12 @@ Plans:
 8. Demo displays atlas generation time (ms) and current FPS
 9. Demo shows a clear error message when WebGPU is not available in the browser
 
-**Plans:** TBD
+**Plans:** 3 plans
+
+Plans:
+- [x] 03-01-PLAN.md - WebGPU rendering core (shaders, renderer, viewport, pretext layout)
+- [ ] 03-02-PLAN.md - UI and interactivity (controls, text input, zoom/pan, metrics)
+- [ ] 03-03-PLAN.md - Split-screen visualization and polish (split-screen, error handling, documentation)
 
 ---
 
@@ -106,7 +111,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Font Parser Integration | 2/2 | Complete    | 2026-05-07 |
 | 2. Atlas Generation | 3/3 | Complete | 2026-05-11 |
-| 3. WebGPU Interactive Demo | 0/? | Not started | - |
+| 3. WebGPU Interactive Demo | 1/3 | In progress | - |
 
 ---
 
@@ -151,5 +156,6 @@ Plans:
 
 *Roadmap created: 2026-05-06*
 *Phase 1 completed: 2026-05-07*
-*Phase 2 planned: 2026-05-07*
-*Next step: `/gsd:execute-phase 02`*
+*Phase 2 completed: 2026-05-11*
+*Phase 3 planned: 2026-05-11*
+*Next step: `/gsd:execute-phase 03`*
