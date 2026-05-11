@@ -40,10 +40,10 @@ export const BufferLayout = {
   instanceStride: 80,
 
   /**
-   * Uniform buffer size: 16 floats (mat4) + 4 floats (color) + 1 u32 (mode) + 1 u32 (padding) = 22 floats = 88 bytes
-   * Note: WebGPU requires uniform buffer alignment to 16 bytes
+   * Uniform buffer size: 16 floats (mat4) + 4 floats (color) + 1 u32 (mode) + 3 u32 (padding) = 24 floats = 96 bytes
+   * Note: WebGPU requires uniform buffer size to be a multiple of 16 bytes
    */
-  uniformSize: 88,
+  uniformSize: 96,
 
   /**
    * Get vertex buffer offset for position attribute
@@ -103,7 +103,7 @@ export function createQuadVertexData(): Float32Array {
  * Create a Float32Array for uniform buffer
  */
 export function createUniformData(data: UniformData): Float32Array {
-  const buffer = new Float32Array(22); // 16 (mat4) + 4 (color) + 2 (mode + padding)
+  const buffer = new Float32Array(24); // 16 (mat4) + 4 (color) + 4 (mode + padding to align to 16 bytes)
 
   // View-projection matrix (16 floats)
   buffer.set(data.viewProjection, 0);
@@ -114,8 +114,10 @@ export function createUniformData(data: UniformData): Float32Array {
   // Mode (1 u32, stored as float)
   buffer[20] = data.mode;
 
-  // Padding (1 u32)
+  // Padding (3 u32 to reach 96 bytes / 16-byte alignment)
   buffer[21] = 0;
+  buffer[22] = 0;
+  buffer[23] = 0;
 
   return buffer;
 }
