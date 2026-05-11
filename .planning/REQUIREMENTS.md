@@ -15,9 +15,9 @@
 
 ### MSDF Generation
 
-- [ ] **MSDF-01**: Library generates MSDF atlas for a set of glyphs on demand
-- [ ] **MSDF-02**: Library stores glyph metrics (bearing, advance, atlas position) alongside atlas
-- [ ] **MSDF-03**: Atlas generation completes in <100ms for typical character sets (A-Z, a-z, 0-9, punctuation)
+- [x] **MSDF-01**: Library generates MSDF atlas for a set of glyphs on demand
+- [x] **MSDF-02**: Library stores glyph metrics (bearing, advance, atlas position) alongside atlas
+- [x] **MSDF-03**: Atlas generation completes in <100ms for typical character sets (A-Z, a-z, 0-9, punctuation)
 
 ### WebGPU Rendering
 
@@ -91,9 +91,9 @@
 | FONT-03 | Phase 1 | Complete |
 | FONT-04 | Phase 1 | Complete |
 | FONT-05 | Phase 1 | Complete |
-| MSDF-01 | Phase 2 | Pending |
-| MSDF-02 | Phase 2 | Pending |
-| MSDF-03 | Phase 2 | Pending |
+| MSDF-01 | Phase 2 | Complete |
+| MSDF-02 | Phase 2 | Complete |
+| MSDF-03 | Phase 2 | Complete |
 | GPU-01 | Phase 3 | Pending |
 | GPU-02 | Phase 3 | Pending |
 | GPU-03 | Phase 3 | Pending |
