@@ -115,13 +115,9 @@ async function main(): Promise<void> {
     // Step 7: Initialize viewport
     const viewport = new Viewport(canvas.width, canvas.height);
 
-    // Center text on screen
-    // Calculate text bounds and offset to center
-    const textStartX =
-      canvas.width / 2 - (instanceData.length / 20) * FONT_SIZE * 0.3;
-    const textStartY = canvas.height / 2 - FONT_SIZE / 2;
-
-    viewport.setPan(-textStartX, -textStartY);
+    // For now, just render at default position (no pan) to verify rendering works
+    // Text will appear at top-left (0, 0)
+    // TODO: Plan 02 will add proper centering and viewport controls
 
     console.log("Viewport initialized");
 
