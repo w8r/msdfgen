@@ -5,25 +5,25 @@
  * and runs render loop displaying "Hello MSDF!" text.
  */
 
-import { loadFont } from '../src/font';
-import { generateAtlas } from '../src/atlas';
-import { MSDFRenderer } from './renderer/MSDFRenderer';
-import { computeTextInstances } from './renderer/TextLayout';
-import { Viewport } from './renderer/Viewport';
+import { loadFont } from "../src/font";
+import { generateAtlas } from "../src/atlas";
+import { MSDFRenderer } from "./renderer/MSDFRenderer";
+import { computeTextInstances } from "./renderer/TextLayout";
+import { Viewport } from "./renderer/Viewport";
 
 // Demo configuration
-const DEMO_TEXT = 'Hello MSDF!';
+const DEMO_TEXT = "Hello MSDF!";
 const FONT_SIZE = 48;
-const FONT_PATH = '/test-fixtures/Roboto-Regular.ttf';
+const FONT_PATH = "../src/test-fixtures/Roboto-Regular.ttf";
 
 /**
  * Show error message
  */
 function showError(message: string): void {
-  const errorDiv = document.getElementById('webgpu-error');
+  const errorDiv = document.getElementById("webgpu-error");
   if (errorDiv) {
-    errorDiv.style.display = 'block';
-    const messageP = errorDiv.querySelector('p');
+    errorDiv.style.display = "block";
+    const messageP = errorDiv.querySelector("p");
     if (messageP) {
       messageP.textContent = message;
     }
@@ -35,9 +35,9 @@ function showError(message: string): void {
  * Initialize and run demo
  */
 async function main(): Promise<void> {
-  const canvas = document.getElementById('webgpu-canvas') as HTMLCanvasElement;
+  const canvas = document.getElementById("webgpu-canvas") as HTMLCanvasElement;
   if (!canvas) {
-    console.error('Canvas element not found');
+    console.error("Canvas element not found");
     return;
   }
 
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
 
   try {
     // Step 1: Load font
-    console.log('Loading font...');
+    console.log("Loading font...");
     const fontBuffer = await fetch(FONT_PATH).then((res) => {
       if (!res.ok) {
         throw new Error(`Failed to load font: ${res.statusText}`);
@@ -56,14 +56,14 @@ async function main(): Promise<void> {
     });
 
     const font = await loadFont(fontBuffer);
-    console.log('Font loaded successfully');
+    console.log("Font loaded successfully");
 
     // Step 2: Generate MSDF atlas
-    console.log('Generating MSDF atlas...');
+    console.log("Generating MSDF atlas...");
     const startTime = performance.now();
 
     // Get unique characters from demo text
-    const chars = Array.from(new Set(DEMO_TEXT)).join('');
+    const chars = Array.from(new Set(DEMO_TEXT)).join("");
 
     const atlas = await generateAtlas(font, chars);
     const generationTime = performance.now() - startTime;
@@ -71,11 +71,11 @@ async function main(): Promise<void> {
     console.log(
       `Atlas generated in ${generationTime.toFixed(2)}ms (${
         atlas.atlasWidth
-      }x${atlas.atlasHeight}, ${atlas.glyphs.size} glyphs)`
+      }x${atlas.atlasHeight}, ${atlas.glyphs.size} glyphs)`,
     );
 
     // Step 3: Initialize WebGPU renderer
-    console.log('Initializing WebGPU renderer...');
+    console.log("Initializing WebGPU renderer...");
     const renderer = await MSDFRenderer.init(canvas, showError);
 
     if (!renderer) {
@@ -83,23 +83,23 @@ async function main(): Promise<void> {
       return;
     }
 
-    console.log('WebGPU renderer initialized');
+    console.log("WebGPU renderer initialized");
 
     // Step 4: Upload atlas to GPU
     renderer.uploadAtlas(atlas);
-    console.log('Atlas uploaded to GPU');
+    console.log("Atlas uploaded to GPU");
 
     // Step 5: Compute text instances
     const instanceData = computeTextInstances(
       DEMO_TEXT,
       FONT_SIZE,
       atlas,
-      'Roboto'
+      "Roboto",
     );
 
     renderer.updateTextInstances(instanceData);
     console.log(
-      `Text instances computed: ${instanceData.length / 20} characters`
+      `Text instances computed: ${instanceData.length / 20} characters`,
     );
 
     // Step 6: Set rendering parameters
@@ -111,12 +111,13 @@ async function main(): Promise<void> {
 
     // Center text on screen
     // Calculate text bounds and offset to center
-    const textStartX = canvas.width / 2 - (instanceData.length / 20) * FONT_SIZE * 0.3;
+    const textStartX =
+      canvas.width / 2 - (instanceData.length / 20) * FONT_SIZE * 0.3;
     const textStartY = canvas.height / 2 - FONT_SIZE / 2;
 
     viewport.setPan(-textStartX, -textStartY);
 
-    console.log('Viewport initialized');
+    console.log("Viewport initialized");
 
     // Step 8: Start render loop
     let frameCount = 0;
@@ -127,7 +128,7 @@ async function main(): Promise<void> {
       const viewMatrix = viewport.getViewMatrix();
 
       // Render frame
-      renderer.render(viewMatrix);
+      renderer!.render(viewMatrix);
 
       // Update FPS counter (every 60 frames)
       frameCount++;
@@ -142,20 +143,20 @@ async function main(): Promise<void> {
       requestAnimationFrame(renderLoop);
     }
 
-    console.log('Starting render loop...');
+    console.log("Starting render loop...");
     requestAnimationFrame(renderLoop);
 
-    console.log('Demo initialized successfully!');
+    console.log("Demo initialized successfully!");
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : 'Unknown error occurred';
+      error instanceof Error ? error.message : "Unknown error occurred";
     showError(`Failed to initialize demo: ${message}`);
   }
 }
 
 // Handle window resize
-window.addEventListener('resize', () => {
-  const canvas = document.getElementById('webgpu-canvas') as HTMLCanvasElement;
+window.addEventListener("resize", () => {
+  const canvas = document.getElementById("webgpu-canvas") as HTMLCanvasElement;
   if (canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -163,8 +164,8 @@ window.addEventListener('resize', () => {
 });
 
 // Start demo when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', main);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", main);
 } else {
   main();
 }
