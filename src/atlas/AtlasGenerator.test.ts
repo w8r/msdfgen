@@ -94,7 +94,9 @@ describe('AtlasGenerator', () => {
       const chars = 'AB';
       const result = generateAtlas(font, chars);
 
-      for (const [char, info] of result.glyphs) {
+      const entries = Array.from(result.glyphs.entries());
+      for (let i = 0; i < entries.length; i++) {
+        const [char, info] = entries[i];
         // Skip empty glyphs (like space)
         const glyph = font.getGlyph(char);
         if (!glyph) continue;
@@ -138,7 +140,9 @@ describe('AtlasGenerator', () => {
       const chars = 'AB';
       const result = generateAtlas(font, chars);
 
-      for (const info of result.glyphs.values()) {
+      const values = Array.from(result.glyphs.values());
+      for (let i = 0; i < values.length; i++) {
+        const info = values[i];
         // Skip empty glyphs
         if (info.atlasBounds.left === 0 &&
             info.atlasBounds.right === 0 &&
@@ -229,7 +233,8 @@ describe('AtlasGenerator', () => {
   describe('atlasBounds consistency', () => {
     it('should have non-overlapping glyph regions', () => {
       const result = generateAtlas(font, 'ABCDEFGH');
-      const bounds = [...result.glyphs.values()].map(g => g.atlasBounds);
+      const values = Array.from(result.glyphs.values());
+      const bounds = values.map(g => g.atlasBounds);
 
       // Check no two glyphs overlap
       for (let i = 0; i < bounds.length; i++) {
@@ -252,7 +257,9 @@ describe('AtlasGenerator', () => {
     it('should have glyph bounds within atlas dimensions', () => {
       const result = generateAtlas(font, 'ABCDEFGHIJ');
 
-      for (const [char, info] of result.glyphs) {
+      const values = Array.from(result.glyphs.values());
+      for (let i = 0; i < values.length; i++) {
+        const info = values[i];
         expect(info.atlasBounds.left).toBeGreaterThanOrEqual(0);
         expect(info.atlasBounds.bottom).toBeGreaterThanOrEqual(0);
         expect(info.atlasBounds.right).toBeLessThanOrEqual(result.atlasWidth);
@@ -328,7 +335,9 @@ describe('AtlasGenerator', () => {
     it('should have consistent planeBounds and atlas bounds relationship', () => {
       const result = generateAtlas(font, 'ABC');
 
-      for (const [char, info] of result.glyphs) {
+      const entries = Array.from(result.glyphs.entries());
+      for (let i = 0; i < entries.length; i++) {
+        const [char, info] = entries[i];
         // Skip space
         if (char === ' ') continue;
 

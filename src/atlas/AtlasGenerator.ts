@@ -39,10 +39,37 @@ function nextPowerOfTwo(n: number): number {
 /**
  * Generates a MSDF atlas for multiple glyphs from a font.
  *
- * @param font - The font to generate glyphs from
- * @param chars - String containing characters to include in the atlas
+ * Creates a texture atlas containing multi-channel signed distance field (MSDF)
+ * representations of glyphs. The atlas uses power-of-two dimensions for GPU compatibility,
+ * and includes normalized UV coordinates ready for shader sampling.
+ *
+ * @param font - The font to generate glyphs from (loaded via `loadFont` or `parseFont`)
+ * @param chars - String containing characters to include in the atlas (duplicates are automatically removed)
  * @param config - Optional configuration for atlas generation
+ * @param config.glyphSize - Size of each glyph in pixels (default: 32)
+ * @param config.padding - Padding between glyphs in pixels (default: 2)
+ * @param config.distanceRange - SDF distance range in pixels (default: 4)
  * @returns Atlas result containing the bitmap, glyph info, and metadata
+ *
+ * @example
+ * ```typescript
+ * import { loadFont, generateAtlas } from 'msdfgen-ts';
+ *
+ * const font = await loadFont('path/to/font.ttf');
+ * const atlas = generateAtlas(font, 'ABCabc123', {
+ *   glyphSize: 32,
+ *   padding: 2,
+ *   distanceRange: 4
+ * });
+ *
+ * console.log(`Atlas: ${atlas.atlasWidth}x${atlas.atlasHeight}px`);
+ * console.log(`Generated in ${atlas.generationTimeMs}ms`);
+ *
+ * // Access glyph info for rendering
+ * const glyphA = atlas.glyphs.get('A');
+ * console.log('UV bounds:', glyphA.uvBounds);
+ * console.log('Advance width:', glyphA.advanceWidth);
+ * ```
  */
 export function generateAtlas(
   font: Font,
