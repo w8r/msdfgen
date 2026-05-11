@@ -1,36 +1,50 @@
 # Deferred Items - Phase 02 Atlas Generation
 
-## Performance Optimization Required
+## Performance Optimization Required (MSDF-03)
 
-### MSDF-03 Requirement Not Met
 **Requirement:** Atlas generation completes in <100ms for typical character sets (A-Z, a-z, 0-9, punctuation)
 
+**Current Status:** IN PROGRESS - Partial optimization completed
+
+### Progress Made
+
+**Optimization 1: Glyph Size Reduction (Completed in Plan 02-03)**
+- Changed default glyph size from 32px to 24px (44% pixel reduction)
+- Result: ~380ms → ~235ms (38% improvement)
+- Status: Measurable progress, but additional optimization needed
+
+### Remaining Gap
+
 **Current Performance:**
-- ASCII set (95 chars): ~380ms (4x slower than target)
-- Alphanumeric (62 chars): ~256ms (2.5x slower than target)
-- Rate: ~4ms per glyph
+- ASCII set (95 chars): ~235ms (target: <100ms, gap: ~135ms)
+- Alphanumeric (62 chars): ~156ms (target: <65ms, gap: ~91ms)
+- Improvement from baseline: 38%
+- Still 2.35x slower than target
 
-**Root Cause:**
-Per-glyph MSDF generation is the bottleneck. Each glyph requires:
-1. Shape-to-edges conversion
-2. Edge coloring
-3. Distance field calculation for every pixel
-4. Median computation
+### Next Steps Required (from VERIFICATION.md)
 
-**Potential Optimizations:**
-1. **Batch Processing**: Generate multiple MSDFs in parallel using worker threads
-2. **SIMD**: Leverage SIMD operations for distance field calculations
-3. **Caching**: Cache edge distance calculations that can be reused
-4. **Algorithm**: Consider alternative MSDF algorithms or approximations
-5. **Resolution**: Reduce default glyph size from 32px to 24px or 16px
+To achieve <100ms target, implement additional optimizations:
 
-**Impact:**
-- Tests are in place and passing (with relaxed timing expectations)
-- Functionality is correct
-- Only performance goal not met
+1. **Parallel MSDF Generation (Highest Impact)**
+   - Use worker threads to process multiple glyphs simultaneously
+   - Expected impact: 2-4x speedup on multi-core systems
+   - Risk: Medium (thread overhead, data transfer costs)
 
-**Priority:** Medium - Functionality works, but doesn't meet stated performance goal
+2. **SIMD Operations for Distance Calculations**
+   - Leverage SIMD instructions for pixel-level distance field math
+   - Expected impact: 1.5-2x speedup for core calculation
+   - Risk: Low (can fall back to scalar if unavailable)
 
-**Tracked In:** MSDF-03 requirement
-**Discovered In:** Plan 02-02 test implementation
+3. **Edge Distance Caching**
+   - Cache distance calculations that can be reused across pixels
+   - Expected impact: 1.3-1.5x speedup
+   - Risk: Low (memory overhead, complexity)
+
+4. **Alternative MSDF Algorithms**
+   - Evaluate approximations or optimized variants
+   - Expected impact: Uncertain, algorithm-dependent
+   - Risk: High (quality/correctness tradeoffs)
+
+**Priority:** Medium - Functionality is complete and correct, only performance target unmet.
+**Completed In:** Plan 02-03 (partial progress)
 **Date:** 2026-05-11
