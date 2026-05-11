@@ -14,7 +14,7 @@ import { Viewport } from './renderer/Viewport';
 // Demo configuration
 const DEMO_TEXT = 'Hello MSDF!';
 const FONT_SIZE = 48;
-const FONT_PATH = '../src/test-fixtures/Roboto-Regular.ttf';
+const FONT_PATH = '/test-fixtures/Roboto-Regular.ttf';
 
 /**
  * Show error message
