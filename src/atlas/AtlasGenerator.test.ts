@@ -10,8 +10,12 @@ describe('AtlasGenerator', () => {
 
   beforeEach(async () => {
     // Load Roboto Regular for testing
-    const fontPath = path.join(__dirname, '../../test-fonts/Roboto-Regular.ttf');
-    const fontBuffer = fs.readFileSync(fontPath);
+    const fontPath = path.join(__dirname, '../test-fixtures/Roboto-Regular.ttf');
+    const buffer = fs.readFileSync(fontPath);
+    const fontBuffer = buffer.buffer.slice(
+      buffer.byteOffset,
+      buffer.byteOffset + buffer.byteLength
+    );
     font = await parseFont(fontBuffer);
   });
 
