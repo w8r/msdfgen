@@ -192,7 +192,7 @@ export class MSDFRenderer {
 
     // Create uniform buffer
     const uniformBuffer = device.createBuffer({
-      size: 88, // 16 floats (mat4) + 4 floats (color) + 2 u32 (mode + padding)
+      size: 96, // 16 floats (mat4) + 4 floats (color) + 4 u32 (mode + padding to 16-byte align)
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
 
