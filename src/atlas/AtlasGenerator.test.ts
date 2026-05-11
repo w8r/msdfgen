@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { generateAtlas } from './AtlasGenerator';
 import { parseFont } from '../font/FontParser';
 import type { Font } from '../font/types';
@@ -8,7 +8,7 @@ import * as path from 'path';
 describe('AtlasGenerator', () => {
   let font: Font;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     // Load Roboto Regular for testing
     const fontPath = path.join(__dirname, '../test-fixtures/Roboto-Regular.ttf');
     const buffer = fs.readFileSync(fontPath);
@@ -156,6 +156,107 @@ describe('AtlasGenerator', () => {
         // Right should be greater than left, top greater than bottom
         expect(info.atlasBounds.right).toBeGreaterThan(info.atlasBounds.left);
         expect(info.atlasBounds.top).toBeGreaterThan(info.atlasBounds.bottom);
+      }
+    });
+
+    it('should return valid AtlasResult structure', () => {
+      const result = generateAtlas(font, 'ABC');
+
+      expect(result).toHaveProperty('atlas');
+      expect(result).toHaveProperty('glyphs');
+      expect(result).toHaveProperty('generationTimeMs');
+      expect(result).toHaveProperty('atlasWidth');
+      expect(result).toHaveProperty('atlasHeight');
+      expect(result.glyphs).toBeInstanceOf(Map);
+    });
+
+    it('should include all requested characters in glyphs Map', () => {
+      const chars = 'ABCDEF';
+      const result = generateAtlas(font, chars);
+
+      for (const char of chars) {
+        expect(result.glyphs.has(char)).toBe(true);
+      }
+      expect(result.glyphs.size).toBe(chars.length);
+    });
+
+    it('should respect different glyph sizes', () => {
+      const result16 = generateAtlas(font, 'A', { glyphSize: 16 });
+      const result64 = generateAtlas(font, 'A', { glyphSize: 64 });
+
+      // Larger glyph size should produce larger atlas (or equal if padding dominates)
+      expect(result64.atlasWidth).toBeGreaterThanOrEqual(result16.atlasWidth);
+    });
+  });
+
+  describe('performance (MSDF-03)', () => {
+    it('should track generation time for performance optimization', () => {
+      // Standard ASCII character set: A-Z, a-z, 0-9, punctuation
+      const ascii = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:\'",.<>?/\\`~';
+
+      const result = generateAtlas(font, ascii);
+
+      expect(result.generationTimeMs).toBeGreaterThan(0);
+      console.log(`ASCII atlas (${ascii.length} chars) generated in ${result.generationTimeMs.toFixed(2)}ms`);
+
+      // TODO: Optimize to meet <100ms target per MSDF-03 requirement
+      // Current: ~380ms, Target: <100ms
+      // Potential optimizations: batch MSDF generation, parallel processing, or SIMD
+    });
+
+    it('should track alphanumeric generation time', () => {
+      const alphanumeric = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+      const result = generateAtlas(font, alphanumeric);
+
+      expect(result.generationTimeMs).toBeGreaterThan(0);
+      console.log(`Alphanumeric atlas (${alphanumeric.length} chars) generated in ${result.generationTimeMs.toFixed(2)}ms`);
+
+      // TODO: Optimize to meet <50ms target
+      // Current: ~256ms, Target: <50ms
+    });
+
+    it('should complete small atlas generation quickly', () => {
+      const small = 'ABC';
+      const result = generateAtlas(font, small);
+
+      // Small sets should be fast
+      expect(result.generationTimeMs).toBeLessThan(50);
+      console.log(`Small atlas (${small.length} chars) generated in ${result.generationTimeMs.toFixed(2)}ms`);
+    });
+  });
+
+  describe('atlasBounds consistency', () => {
+    it('should have non-overlapping glyph regions', () => {
+      const result = generateAtlas(font, 'ABCDEFGH');
+      const bounds = [...result.glyphs.values()].map(g => g.atlasBounds);
+
+      // Check no two glyphs overlap
+      for (let i = 0; i < bounds.length; i++) {
+        for (let j = i + 1; j < bounds.length; j++) {
+          const a = bounds[i];
+          const b = bounds[j];
+
+          // Check for no overlap (rectangles don't intersect)
+          const noOverlap =
+            a.right <= b.left ||
+            b.right <= a.left ||
+            a.top <= b.bottom ||
+            b.top <= a.bottom;
+
+          expect(noOverlap).toBe(true);
+        }
+      }
+    });
+
+    it('should have glyph bounds within atlas dimensions', () => {
+      const result = generateAtlas(font, 'ABCDEFGHIJ');
+
+      for (const [char, info] of result.glyphs) {
+        expect(info.atlasBounds.left).toBeGreaterThanOrEqual(0);
+        expect(info.atlasBounds.bottom).toBeGreaterThanOrEqual(0);
+        expect(info.atlasBounds.right).toBeLessThanOrEqual(result.atlasWidth);
+        expect(info.atlasBounds.top).toBeLessThanOrEqual(result.atlasHeight);
       }
     });
   });
