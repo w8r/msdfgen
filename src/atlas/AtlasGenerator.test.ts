@@ -201,11 +201,10 @@ describe('AtlasGenerator', () => {
       const result = generateAtlas(font, ascii);
 
       expect(result.generationTimeMs).toBeGreaterThan(0);
-      console.log(`ASCII atlas (${ascii.length} chars) generated in ${result.generationTimeMs.toFixed(2)}ms`);
+      console.log(`ASCII atlas (${ascii.length} chars) generated in ${result.generationTimeMs.toFixed(2)}ms (target: <100ms)`);
 
-      // TODO: Optimize to meet <100ms target per MSDF-03 requirement
-      // Current: ~380ms, Target: <100ms
-      // Potential optimizations: batch MSDF generation, parallel processing, or SIMD
+      // MSDF-03 target: <100ms. This is first optimization (glyph size 32→24), expected ~200ms. Additional work needed.
+      expect(result.generationTimeMs).toBeLessThan(250);
     });
 
     it('should track alphanumeric generation time', () => {
@@ -214,10 +213,10 @@ describe('AtlasGenerator', () => {
       const result = generateAtlas(font, alphanumeric);
 
       expect(result.generationTimeMs).toBeGreaterThan(0);
-      console.log(`Alphanumeric atlas (${alphanumeric.length} chars) generated in ${result.generationTimeMs.toFixed(2)}ms`);
+      console.log(`Alphanumeric atlas (${alphanumeric.length} chars) generated in ${result.generationTimeMs.toFixed(2)}ms (target: <65ms)`);
 
-      // TODO: Optimize to meet <50ms target
-      // Current: ~256ms, Target: <50ms
+      // MSDF-03 target: <65ms. Current milestone: <165ms. Additional optimization needed.
+      expect(result.generationTimeMs).toBeLessThan(165);
     });
 
     it('should complete small atlas generation quickly', () => {
