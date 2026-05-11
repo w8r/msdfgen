@@ -5,7 +5,7 @@
  * and runs render loop displaying "Hello MSDF!" text.
  */
 
-import { loadFont } from "../src/font";
+import { parseFont } from "../src/font";
 import { generateAtlas } from "../src/atlas";
 import { MSDFRenderer } from "./renderer/MSDFRenderer";
 import { computeTextInstances } from "./renderer/TextLayout";
@@ -47,15 +47,21 @@ async function main(): Promise<void> {
 
   try {
     // Step 1: Load font
-    console.log("Loading font...");
-    const fontBuffer = await fetch(FONT_PATH).then((res) => {
-      if (!res.ok) {
-        throw new Error(`Failed to load font: ${res.statusText}`);
-      }
-      return res.arrayBuffer();
-    });
+    console.log("Loading font from:", FONT_PATH);
+    console.log("Full URL:", new URL(FONT_PATH, window.location.href).href);
+    const fontResponse = await fetch(FONT_PATH);
+    console.log("Font response:", fontResponse);
+    console.log("Font response status:", fontResponse.status);
+    console.log("Font response headers:", Object.fromEntries(fontResponse.headers.entries()));
 
-    const font = await loadFont(fontBuffer);
+    if (!fontResponse.ok) {
+      throw new Error(`Failed to load font: ${fontResponse.statusText}`);
+    }
+
+    const fontBuffer = await fontResponse.arrayBuffer();
+    console.log("Font buffer size:", fontBuffer.byteLength);
+
+    const font = await parseFont(fontBuffer);
     console.log("Font loaded successfully");
 
     // Step 2: Generate MSDF atlas
