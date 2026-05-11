@@ -50,6 +50,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@chenglou/pretext": "0.0.7",
+    "lil-gui": "0.21.0",
     "potpack": "2.1.0"
   }
 }
