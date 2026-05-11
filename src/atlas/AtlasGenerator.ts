@@ -13,7 +13,7 @@ import { edgeColoringSimple } from '../core/edge-coloring/edge-coloring';
  * Default configuration values
  */
 const DEFAULT_CONFIG: Required<AtlasConfig> = {
-  glyphSize: 32,
+  glyphSize: 24,
   padding: 2,
   distanceRange: 4,
 };
@@ -46,7 +46,7 @@ function nextPowerOfTwo(n: number): number {
  * @param font - The font to generate glyphs from (loaded via `loadFont` or `parseFont`)
  * @param chars - String containing characters to include in the atlas (duplicates are automatically removed)
  * @param config - Optional configuration for atlas generation
- * @param config.glyphSize - Size of each glyph in pixels (default: 32)
+ * @param config.glyphSize - Size of each glyph in pixels (default: 24)
  * @param config.padding - Padding between glyphs in pixels (default: 2)
  * @param config.distanceRange - SDF distance range in pixels (default: 4)
  * @returns Atlas result containing the bitmap, glyph info, and metadata
@@ -57,7 +57,7 @@ function nextPowerOfTwo(n: number): number {
  *
  * const font = await loadFont('path/to/font.ttf');
  * const atlas = generateAtlas(font, 'ABCabc123', {
- *   glyphSize: 32,
+ *   glyphSize: 24,
  *   padding: 2,
  *   distanceRange: 4
  * });
