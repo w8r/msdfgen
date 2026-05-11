@@ -13,7 +13,7 @@ import { Viewport } from "./renderer/Viewport";
 
 // Demo configuration
 const DEMO_TEXT = "Hello MSDF!";
-const FONT_SIZE = 48;
+const FONT_SIZE = 96; // Larger size for visibility
 const FONT_PATH = "/test-fixtures/Roboto-Regular.ttf"; // Served from demo/public/ symlink
 
 /**
@@ -109,7 +109,7 @@ async function main(): Promise<void> {
     );
 
     // Step 6: Set rendering parameters
-    renderer.setColor(1.0, 1.0, 1.0, 1.0); // White text
+    renderer.setColor(0.0, 1.0, 1.0, 1.0); // Bright cyan text for visibility
     renderer.setVisualizationMode(0); // Rendered mode
 
     // Step 7: Initialize viewport
