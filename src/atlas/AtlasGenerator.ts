@@ -59,7 +59,11 @@ export function generateAtlas(
   };
 
   // 1. Deduplicate and validate characters
-  const uniqueChars = [...new Set(chars)].filter(char => font.hasGlyph(char));
+  const charSet = new Set<string>();
+  for (let i = 0; i < chars.length; i++) {
+    charSet.add(chars[i]);
+  }
+  const uniqueChars = Array.from(charSet).filter(char => font.hasGlyph(char));
 
   // 2. Prepare boxes for potpack
   const cellSize = cfg.glyphSize + cfg.padding * 2;
@@ -111,7 +115,7 @@ export function generateAtlas(
 
     if (hasContours) {
       // Apply edge coloring for MSDF
-      edgeColoringSimple(shape, Math.PI, 0n);
+      edgeColoringSimple(shape, Math.PI, BigInt(0));
 
       // Compute transformation to fit glyph in cell
       const margin = cfg.distanceRange;

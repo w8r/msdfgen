@@ -13,3 +13,6 @@ export { DistanceMapping, Delta } from "./core/types/DistanceMapping";
 
 // Font parsing
 export * from './font';
+
+// Atlas generation
+export * from './atlas';
