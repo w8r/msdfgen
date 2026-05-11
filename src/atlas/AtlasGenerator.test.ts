@@ -260,4 +260,89 @@ describe('AtlasGenerator', () => {
       }
     });
   });
+
+  describe('edge cases', () => {
+    it('should handle empty character string', () => {
+      const result = generateAtlas(font, '');
+
+      expect(result.glyphs.size).toBe(0);
+      // Atlas should still be valid (even if minimal size)
+      expect(result.atlasWidth).toBeGreaterThan(0);
+      expect(result.atlasHeight).toBeGreaterThan(0);
+    });
+
+    it('should handle single character', () => {
+      const result = generateAtlas(font, 'X');
+
+      expect(result.glyphs.size).toBe(1);
+      expect(result.glyphs.has('X')).toBe(true);
+    });
+
+    it('should handle characters with different shapes', () => {
+      // Mix of simple and complex glyphs
+      const chars = 'IMW8%@';  // I is simple, W/M are complex, 8/% have multiple parts
+      const result = generateAtlas(font, chars);
+
+      expect(result.glyphs.size).toBe(chars.length);
+      for (const char of chars) {
+        const info = result.glyphs.get(char);
+        expect(info).toBeDefined();
+        expect(info!.advanceWidth).toBeGreaterThan(0);
+      }
+    });
+
+    it('should handle custom padding', () => {
+      const resultPad2 = generateAtlas(font, 'ABC', { padding: 2 });
+      const resultPad8 = generateAtlas(font, 'ABC', { padding: 8 });
+
+      // Higher padding should result in larger atlas (or equal)
+      expect(resultPad8.atlasWidth).toBeGreaterThanOrEqual(resultPad2.atlasWidth);
+    });
+
+    it('should handle large character sets', () => {
+      // 200+ characters (with duplicates that will be deduped)
+      const extended = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' +
+        '!@#$%^&*()_+-=[]{}|;:\'",.<>?/\\`~' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // Duplicates will be deduped
+
+      const result = generateAtlas(font, extended);
+
+      // Should complete without error
+      expect(result.glyphs.size).toBeLessThanOrEqual(extended.length);
+      expect(result.atlasWidth).toBeLessThanOrEqual(4096); // Reasonable GPU limit
+      expect(result.atlasHeight).toBeLessThanOrEqual(4096);
+    });
+  });
+
+  describe('planeBounds', () => {
+    it('should have planeBounds in em units (normalized)', () => {
+      const result = generateAtlas(font, 'A');
+      const glyphInfo = result.glyphs.get('A')!;
+
+      // planeBounds should be normalized to em (typically -1 to 1 range or 0 to 1)
+      // The exact values depend on the glyph, but they should be reasonable
+      expect(Math.abs(glyphInfo.planeBounds.right - glyphInfo.planeBounds.left)).toBeLessThan(2);
+      expect(Math.abs(glyphInfo.planeBounds.top - glyphInfo.planeBounds.bottom)).toBeLessThan(2);
+    });
+
+    it('should have consistent planeBounds and atlas bounds relationship', () => {
+      const result = generateAtlas(font, 'ABC');
+
+      for (const [char, info] of result.glyphs) {
+        // Skip space
+        if (char === ' ') continue;
+
+        // planeBounds and atlasBounds should both have positive dimensions
+        const planeWidth = info.planeBounds.right - info.planeBounds.left;
+        const planeHeight = info.planeBounds.top - info.planeBounds.bottom;
+        const atlasWidth = info.atlasBounds.right - info.atlasBounds.left;
+        const atlasHeight = info.atlasBounds.top - info.atlasBounds.bottom;
+
+        expect(planeWidth).toBeGreaterThanOrEqual(0);
+        expect(planeHeight).toBeGreaterThanOrEqual(0);
+        expect(atlasWidth).toBeGreaterThan(0);
+        expect(atlasHeight).toBeGreaterThan(0);
+      }
+    });
+  });
 });
