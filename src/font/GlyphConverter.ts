@@ -30,7 +30,8 @@ export function glyphPathToShape(commands: PathCommand[]): Shape {
   let contourStart: Vector2 | null = null;
   let currentPoint: Vector2 | null = null;
 
-  for (const cmd of commands) {
+  for (let i = 0; i < commands.length; i++) {
+    const cmd = commands[i];
     switch (cmd.type) {
       case 'M':
         // Start new contour
