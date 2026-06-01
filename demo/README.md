@@ -23,14 +23,21 @@ The demo generates and visualizes 6 different shapes using all 4 distance field 
 5. **Star** - 5-pointed star with 10 linear edges
 6. **Letter A** - Letter with inner and outer contours (demonstrates holes)
 
+For each shape, you'll see two rows:
+
+1. **Distance Fields (Raw Data)** - The raw distance field values visualized as grayscale (SDF/PSDF) or RGB (MSDF/MTSDF)
+2. **Rendered Shapes (Antialiased)** - The shapes rendered using the distance fields with smooth antialiasing, demonstrating the quality and sharpness of each algorithm
+
 ### Distance Field Types Shown
 
-Each shape displays 4 different distance field outputs:
+Each shape displays 4 different distance field algorithms:
 
 - **SDF** (Single Channel) - Classic signed distance field with true Euclidean distance
-- **PSDF** (Perpendicular) - Uses perpendicular distance from edges
-- **MSDF** (Multi-Channel) - 3-channel RGB output that preserves sharp corners
-- **MTSDF** (Multi + True) - 4-channel RGBA combining MSDF with true distance in alpha
+- **PSDF** (Perpendicular) - Uses perpendicular distance from edges instead of true distance
+- **MSDF** (Multi-Channel) - 3-channel RGB output that preserves sharp corners better than SDF
+- **MTSDF** (Multi + True) - 4-channel RGBA combining MSDF with true distance in alpha channel
+
+The rendered versions show how these distance fields are actually used in practice - with smooth antialiasing applied using a smoothstep function. This demonstrates the visual quality difference between algorithms, especially at sharp corners where MSDF excels.
 
 ## Performance
 
@@ -44,6 +51,8 @@ The demo measures and displays:
 ✅ **Manual Shape Creation** - All shapes hand-coded using the MSDF API
 ✅ **Live Generation** - Distance fields generated in the browser
 ✅ **Visual Comparison** - Side-by-side comparison of all algorithms
+✅ **Rendered Output** - Shows actual antialiased rendering from distance fields
+✅ **Quality Demonstration** - Compare SDF vs MSDF antialiasing quality, especially at corners
 ✅ **Educational** - Info sections explain each algorithm
 ✅ **Responsive** - Works on desktop and tablet screens
 

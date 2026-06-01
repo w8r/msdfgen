@@ -10,6 +10,9 @@ import {
   mtsdfToImageData,
   renderMSDFMedian,
   renderToCanvas,
+  renderSDFAntialiased,
+  renderMSDFAntialiased,
+  renderMTSDFAntialiased,
 } from "../src/utils/canvas-utils";
 
 function createShapeCard(shapeName: string, description: string): HTMLElement {
@@ -24,6 +27,12 @@ function createShapeCard(shapeName: string, description: string): HTMLElement {
   desc.className = "shape-description";
   desc.textContent = description;
   card.appendChild(desc);
+
+  // Distance field visualization section
+  const dfSection = document.createElement("div");
+  dfSection.className = "section-header";
+  dfSection.textContent = "Distance Fields (Raw Data)";
+  card.appendChild(dfSection);
 
   const canvasGrid = document.createElement("div");
   canvasGrid.className = "canvas-grid";
@@ -54,6 +63,42 @@ function createShapeCard(shapeName: string, description: string): HTMLElement {
   }
 
   card.appendChild(canvasGrid);
+
+  // Rendered shapes section
+  const renderSection = document.createElement("div");
+  renderSection.className = "section-header";
+  renderSection.textContent = "Rendered Shapes (Antialiased)";
+  card.appendChild(renderSection);
+
+  const renderGrid = document.createElement("div");
+  renderGrid.className = "canvas-grid";
+
+  const renderTypes = [
+    { label: "SDF Rendered", id: "sdf-render" },
+    { label: "PSDF Rendered", id: "psdf-render" },
+    { label: "MSDF Rendered", id: "msdf-render" },
+    { label: "MTSDF Rendered", id: "mtsdf-render" },
+  ];
+
+  for (const type of renderTypes) {
+    const container = document.createElement("div");
+    container.className = "canvas-container";
+
+    const label = document.createElement("div");
+    label.className = "canvas-label";
+    label.textContent = type.label;
+    container.appendChild(label);
+
+    const canvas = document.createElement("canvas");
+    canvas.id = `${shapeName.toLowerCase().replace(/\s+/g, "-")}-${type.id}`;
+    canvas.width = 128;
+    canvas.height = 128;
+    container.appendChild(canvas);
+
+    renderGrid.appendChild(container);
+  }
+
+  card.appendChild(renderGrid);
   return card;
 }
 
@@ -101,16 +146,16 @@ async function runDemo(): Promise<void> {
     for (const demoShape of demoShapes) {
       const nameSlug = demoShape.name.toLowerCase().replace(/\s+/g, "-");
 
-      // Generate all distance fields
-      const distanceFields = generateAllDistanceFields(demoShape.shape, 64);
+      // Generate all distance fields at high resolution for sharp rendering
+      const distanceFields = generateAllDistanceFields(demoShape.shape, 256);
 
-      // Convert to ImageData
+      // Convert to ImageData (raw distance fields)
       const sdfImage = sdfToImageData(distanceFields.sdf);
       const psdfImage = sdfToImageData(distanceFields.psdf);
       const msdfImage = msdfToImageData(distanceFields.msdf);
       const mtsdfImage = mtsdfToImageData(distanceFields.mtsdf);
 
-      // Render to canvases
+      // Render distance fields to canvases (downscale from 256 to 128)
       const sdfCanvas = document.getElementById(
         `${nameSlug}-sdf`
       ) as HTMLCanvasElement;
@@ -124,10 +169,35 @@ async function runDemo(): Promise<void> {
         `${nameSlug}-mtsdf`
       ) as HTMLCanvasElement;
 
-      if (sdfCanvas) renderToCanvas(sdfImage, sdfCanvas, 2);
-      if (psdfCanvas) renderToCanvas(psdfImage, psdfCanvas, 2);
-      if (msdfCanvas) renderToCanvas(msdfImage, msdfCanvas, 2);
-      if (mtsdfCanvas) renderToCanvas(mtsdfImage, mtsdfCanvas, 2);
+      if (sdfCanvas) renderToCanvas(sdfImage, sdfCanvas, 0.5);
+      if (psdfCanvas) renderToCanvas(psdfImage, psdfCanvas, 0.5);
+      if (msdfCanvas) renderToCanvas(msdfImage, msdfCanvas, 0.5);
+      if (mtsdfCanvas) renderToCanvas(mtsdfImage, mtsdfCanvas, 0.5);
+
+      // Render antialiased shapes with very tight smoothing for maximum sharpness
+      // Smoothing of 0.01 gives about 1-2 pixels of antialiasing at 256px (0.5-1 pixel at 128px display)
+      const sdfRendered = renderSDFAntialiased(distanceFields.sdf, 0.5, 0.01);
+      const psdfRendered = renderSDFAntialiased(distanceFields.psdf, 0.5, 0.01);
+      const msdfRendered = renderMSDFAntialiased(distanceFields.msdf, 0.5, 0.01);
+      const mtsdfRendered = renderMTSDFAntialiased(distanceFields.mtsdf, 0.5, 0.01);
+
+      const sdfRenderCanvas = document.getElementById(
+        `${nameSlug}-sdf-render`
+      ) as HTMLCanvasElement;
+      const psdfRenderCanvas = document.getElementById(
+        `${nameSlug}-psdf-render`
+      ) as HTMLCanvasElement;
+      const msdfRenderCanvas = document.getElementById(
+        `${nameSlug}-msdf-render`
+      ) as HTMLCanvasElement;
+      const mtsdfRenderCanvas = document.getElementById(
+        `${nameSlug}-mtsdf-render`
+      ) as HTMLCanvasElement;
+
+      if (sdfRenderCanvas) renderToCanvas(sdfRendered, sdfRenderCanvas, 0.5);
+      if (psdfRenderCanvas) renderToCanvas(psdfRendered, psdfRenderCanvas, 0.5);
+      if (msdfRenderCanvas) renderToCanvas(msdfRendered, msdfRenderCanvas, 0.5);
+      if (mtsdfRenderCanvas) renderToCanvas(mtsdfRendered, mtsdfRenderCanvas, 0.5);
 
       // Log progress
       console.log(`Generated distance fields for ${demoShape.name}`);

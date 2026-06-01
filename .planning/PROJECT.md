@@ -35,7 +35,7 @@ Generate pixel-perfect MSDF atlases from font files instantly, enabling infinite
 - Native desktop application — web-first
 - Server-side rendering API — library focus
 - Font subsetting/optimization — separate concern
-- Text layout engine (line breaking, bidi) — use external layouter
+- Custom text layout engine — using pretext (chenglou/pretext) as external layouter
 - WebGL fallback — WebGPU only for demo
 
 ## Context
@@ -66,10 +66,11 @@ This is a TypeScript port inspired by the original C++ msdfgen library by Chlums
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Zero/minimal runtime deps | Bundle size, simplicity, fewer failure points | — Pending |
-| WebGPU-only demo | Modern API, best performance, future-focused | — Pending |
-| Allow tiny font parsing dep | WOFF2 Brotli + OTF complexity vs. build time | — Pending |
-| Interactive editor demo | Shows real-world use case, impressive showcase | — Pending |
+| Zero/minimal runtime deps | Bundle size, simplicity, fewer failure points | ✓ Decided |
+| WebGPU-only demo | Modern API, best performance, future-focused | ✓ Decided |
+| Allow tiny font parsing dep | WOFF2 Brotli + OTF complexity vs. build time | ✓ opentype.js |
+| Interactive editor demo | Shows real-world use case, impressive showcase | ✓ Decided |
+| Use pretext for layout | External layout engine per minimalist philosophy | ✓ chenglou/pretext |
 
 ---
-*Last updated: 2026-05-04 after initialization*
+*Last updated: 2026-05-06 after project initialization complete*

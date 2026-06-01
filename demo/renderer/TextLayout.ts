@@ -36,7 +36,9 @@ export function computeTextInstances(
 
   for (const line of lines) {
     let cursorX = 0;
-    const cursorY = 0; // Single line at Y=0 for now
+    // Start text below top edge - use fontSize as offset to ensure glyphs are visible
+    // (glyphs have planeBounds that extend below baseline with negative values)
+    const cursorY = fontSize;
 
     for (let i = 0; i < line.text.length; i++) {
       const char = line.text[i];

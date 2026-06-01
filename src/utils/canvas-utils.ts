@@ -137,3 +137,172 @@ export function renderMSDFMedian(bitmap: Bitmap<Float32Array, 3>): ImageData {
 
   return imageData;
 }
+
+/**
+ * Renders SDF as a binary shape (black/white) using threshold
+ * This simulates how SDF would be rendered in a shader
+ */
+export function renderSDFShape(bitmap: Bitmap<Float32Array, 1>, threshold: number = 0.5): ImageData {
+  const width = bitmap.width();
+  const height = bitmap.height();
+  const imageData = new ImageData(width, height);
+  const sdfData = bitmap.data();
+  const pixels = imageData.data;
+
+  for (let i = 0; i < width * height; i++) {
+    const distance = sdfData[i];
+    // Simple threshold: > 0.5 is inside (white), < 0.5 is outside (black)
+    const alpha = distance >= threshold ? 255 : 0;
+
+    const pixelOffset = i * 4;
+    pixels[pixelOffset] = 255;     // R (white)
+    pixels[pixelOffset + 1] = 255; // G (white)
+    pixels[pixelOffset + 2] = 255; // B (white)
+    pixels[pixelOffset + 3] = alpha; // A
+  }
+
+  return imageData;
+}
+
+/**
+ * Renders MSDF as a shape using the median distance for thresholding
+ * This simulates how MSDF would be rendered in a shader
+ */
+export function renderMSDFShape(bitmap: Bitmap<Float32Array, 3>, threshold: number = 0.5): ImageData {
+  const width = bitmap.width();
+  const height = bitmap.height();
+  const imageData = new ImageData(width, height);
+  const msdfData = bitmap.data();
+  const pixels = imageData.data;
+
+  for (let i = 0; i < width * height; i++) {
+    const msdfOffset = i * 3;
+    const r = msdfData[msdfOffset];
+    const g = msdfData[msdfOffset + 1];
+    const b = msdfData[msdfOffset + 2];
+
+    // Calculate median (this is how MSDF is sampled in shaders)
+    const median = Math.max(Math.min(r, g), Math.min(Math.max(r, g), b));
+    const alpha = median >= threshold ? 255 : 0;
+
+    const pixelOffset = i * 4;
+    pixels[pixelOffset] = 255;     // R (white)
+    pixels[pixelOffset + 1] = 255; // G (white)
+    pixels[pixelOffset + 2] = 255; // B (white)
+    pixels[pixelOffset + 3] = alpha; // A
+  }
+
+  return imageData;
+}
+
+/**
+ * Renders SDF with smooth antialiasing using smoothstep
+ * This shows the quality of the antialiasing that SDF provides
+ */
+export function renderSDFAntialiased(bitmap: Bitmap<Float32Array, 1>, threshold: number = 0.5, smoothing: number = 0.1): ImageData {
+  const width = bitmap.width();
+  const height = bitmap.height();
+  const imageData = new ImageData(width, height);
+  const sdfData = bitmap.data();
+  const pixels = imageData.data;
+
+  for (let i = 0; i < width * height; i++) {
+    const distance = sdfData[i];
+
+    // Smoothstep for antialiasing
+    const edge0 = threshold - smoothing / 2;
+    const edge1 = threshold + smoothing / 2;
+    let alpha = (distance - edge0) / (edge1 - edge0);
+    alpha = Math.max(0, Math.min(1, alpha)); // clamp
+    alpha = alpha * alpha * (3 - 2 * alpha); // smoothstep
+
+    const alphaValue = Math.round(alpha * 255);
+
+    const pixelOffset = i * 4;
+    pixels[pixelOffset] = 255;     // R (white)
+    pixels[pixelOffset + 1] = 255; // G (white)
+    pixels[pixelOffset + 2] = 255; // B (white)
+    pixels[pixelOffset + 3] = alphaValue; // A
+  }
+
+  return imageData;
+}
+
+/**
+ * Renders MSDF with smooth antialiasing using the median
+ * This shows the superior quality of MSDF antialiasing
+ */
+export function renderMSDFAntialiased(bitmap: Bitmap<Float32Array, 3>, threshold: number = 0.5, smoothing: number = 0.1): ImageData {
+  const width = bitmap.width();
+  const height = bitmap.height();
+  const imageData = new ImageData(width, height);
+  const msdfData = bitmap.data();
+  const pixels = imageData.data;
+
+  for (let i = 0; i < width * height; i++) {
+    const msdfOffset = i * 3;
+    const r = msdfData[msdfOffset];
+    const g = msdfData[msdfOffset + 1];
+    const b = msdfData[msdfOffset + 2];
+
+    // Calculate median
+    const median = Math.max(Math.min(r, g), Math.min(Math.max(r, g), b));
+
+    // Smoothstep for antialiasing
+    const edge0 = threshold - smoothing / 2;
+    const edge1 = threshold + smoothing / 2;
+    let alpha = (median - edge0) / (edge1 - edge0);
+    alpha = Math.max(0, Math.min(1, alpha)); // clamp
+    alpha = alpha * alpha * (3 - 2 * alpha); // smoothstep
+
+    const alphaValue = Math.round(alpha * 255);
+
+    const pixelOffset = i * 4;
+    pixels[pixelOffset] = 255;     // R (white)
+    pixels[pixelOffset + 1] = 255; // G (white)
+    pixels[pixelOffset + 2] = 255; // B (white)
+    pixels[pixelOffset + 3] = alphaValue; // A
+  }
+
+  return imageData;
+}
+
+/**
+ * Renders MTSDF with smooth antialiasing using the median of RGB channels
+ * MTSDF has 4 channels (RGB for MSDF + alpha for true distance)
+ */
+export function renderMTSDFAntialiased(bitmap: Bitmap<Float32Array, 4>, threshold: number = 0.5, smoothing: number = 0.1): ImageData {
+  const width = bitmap.width();
+  const height = bitmap.height();
+  const imageData = new ImageData(width, height);
+  const mtsdfData = bitmap.data();
+  const pixels = imageData.data;
+
+  for (let i = 0; i < width * height; i++) {
+    const mtsdfOffset = i * 4;
+    const r = mtsdfData[mtsdfOffset];
+    const g = mtsdfData[mtsdfOffset + 1];
+    const b = mtsdfData[mtsdfOffset + 2];
+    // Alpha channel (mtsdfData[mtsdfOffset + 3]) contains true distance, not used here
+
+    // Calculate median of RGB channels (same as MSDF)
+    const median = Math.max(Math.min(r, g), Math.min(Math.max(r, g), b));
+
+    // Smoothstep for antialiasing
+    const edge0 = threshold - smoothing / 2;
+    const edge1 = threshold + smoothing / 2;
+    let alpha = (median - edge0) / (edge1 - edge0);
+    alpha = Math.max(0, Math.min(1, alpha)); // clamp
+    alpha = alpha * alpha * (3 - 2 * alpha); // smoothstep
+
+    const alphaValue = Math.round(alpha * 255);
+
+    const pixelOffset = i * 4;
+    pixels[pixelOffset] = 255;     // R (white)
+    pixels[pixelOffset + 1] = 255; // G (white)
+    pixels[pixelOffset + 2] = 255; // B (white)
+    pixels[pixelOffset + 3] = alphaValue; // A
+  }
+
+  return imageData;
+}

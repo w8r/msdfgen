@@ -27,6 +27,7 @@ export class MSDFRenderer {
   private instanceCount = 0;
   private currentColor: [number, number, number, number] = [1, 1, 1, 1];
   private currentMode = 0;
+  private hasLoggedFirstRender = false;
 
   private constructor(
     device: GPUDevice,
@@ -100,6 +101,19 @@ export class MSDFRenderer {
     const shaderModule = device.createShaderModule({
       code: shaderCode,
     });
+
+    // Check for shader compilation errors
+    const compilationInfo = await shaderModule.getCompilationInfo();
+    if (compilationInfo.messages.length > 0) {
+      console.warn('Shader compilation messages:', compilationInfo.messages);
+      for (const msg of compilationInfo.messages) {
+        if (msg.type === 'error') {
+          onError(`Shader compilation error: ${msg.message}`);
+          return null;
+        }
+      }
+    }
+    console.log('Shader module compiled successfully');
 
     // Create bind group layout
     const bindGroupLayout = device.createBindGroupLayout({
@@ -243,16 +257,31 @@ export class MSDFRenderer {
    * Upload MSDF atlas texture to GPU
    */
   uploadAtlas(atlas: AtlasResult): void {
+    console.log('uploadAtlas() called:', {
+      atlasWidth: atlas.atlasWidth,
+      atlasHeight: atlas.atlasHeight,
+      glyphCount: atlas.glyphs.size,
+    });
+
     const { atlasWidth, atlasHeight } = atlas;
     const floatData = atlas.atlas.data(); // Float32Array, 3 channels (RGB)
+    console.log('Atlas float data length:', floatData.length);
 
     // Convert RGB Float32 (0.0-1.0) to RGBA Uint8 (0-255)
+    // Flip vertically only (Y-axis) to match texture coordinate system
     const uint8Data = new Uint8Array(atlasWidth * atlasHeight * 4);
-    for (let i = 0; i < atlasWidth * atlasHeight; i++) {
-      uint8Data[i * 4 + 0] = Math.round(floatData[i * 3 + 0] * 255); // R
-      uint8Data[i * 4 + 1] = Math.round(floatData[i * 3 + 1] * 255); // G
-      uint8Data[i * 4 + 2] = Math.round(floatData[i * 3 + 2] * 255); // B
-      uint8Data[i * 4 + 3] = 255; // A
+    for (let y = 0; y < atlasHeight; y++) {
+      for (let x = 0; x < atlasWidth; x++) {
+        // Flip Y only: read from (x, y), write to (x, height-1-y)
+        const srcIdx = (y * atlasWidth + x) * 3;
+        const dstY = atlasHeight - 1 - y;
+        const dstIdx = (dstY * atlasWidth + x) * 4;
+
+        uint8Data[dstIdx + 0] = Math.round(floatData[srcIdx + 0] * 255); // R
+        uint8Data[dstIdx + 1] = Math.round(floatData[srcIdx + 1] * 255); // G
+        uint8Data[dstIdx + 2] = Math.round(floatData[srcIdx + 2] * 255); // B
+        uint8Data[dstIdx + 3] = 255; // A
+      }
     }
 
     // Calculate aligned bytesPerRow (must be multiple of 256)
@@ -294,12 +323,26 @@ export class MSDFRenderer {
         { binding: 2, resource: this.sampler },
       ],
     });
+
+    console.log('uploadAtlas() completed successfully');
   }
 
   /**
    * Update text instance buffer
    */
   updateTextInstances(instanceData: Float32Array): void {
+    console.log('updateTextInstances() called:', {
+      dataLength: instanceData.length,
+      instanceCount: instanceData.length / 20,
+      firstInstance: {
+        scaleX: instanceData[0],
+        scaleY: instanceData[5],
+        translateX: instanceData[12],
+        translateY: instanceData[13],
+        uvBounds: [instanceData[16], instanceData[17], instanceData[18], instanceData[19]],
+      },
+    });
+
     const requiredSize = instanceData.byteLength;
 
     // Recreate instance buffer if size changed or doesn't exist
@@ -344,7 +387,22 @@ export class MSDFRenderer {
   render(viewMatrix: Float32Array): void {
     if (!this.instanceBuffer || this.instanceCount === 0) {
       // Nothing to render
+      console.warn('render() early exit:', {
+        hasInstanceBuffer: !!this.instanceBuffer,
+        instanceCount: this.instanceCount,
+      });
       return;
+    }
+
+    // Debug: Log first render call
+    if (!this.hasLoggedFirstRender) {
+      console.log('render() called:', {
+        instanceCount: this.instanceCount,
+        hasAtlas: !!this.atlasTexture,
+        color: this.currentColor,
+        mode: this.currentMode,
+      });
+      this.hasLoggedFirstRender = true;
     }
 
     // Update uniform buffer

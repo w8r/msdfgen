@@ -112,9 +112,9 @@ export class Viewport {
     matrix[2] = 0;
     matrix[3] = 0;
 
-    // Column 1
+    // Column 1 (flip Y-axis for top-down canvas coordinates)
     matrix[4] = 0;
-    matrix[5] = 2 / height;
+    matrix[5] = -2 / height;
     matrix[6] = 0;
     matrix[7] = 0;
 
@@ -126,7 +126,7 @@ export class Viewport {
 
     // Column 3 (translation)
     matrix[12] = -(pannedRight + pannedLeft) / width;
-    matrix[13] = -(pannedBottom + pannedTop) / height;
+    matrix[13] = (pannedBottom + pannedTop) / height; // Positive for top-down Y
     matrix[14] = -(far + near) / depth;
     matrix[15] = 1;
 

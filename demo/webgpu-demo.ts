@@ -13,7 +13,7 @@ import { Viewport } from "./renderer/Viewport";
 
 // Demo configuration
 const DEMO_TEXT = "Hello MSDF!";
-const FONT_SIZE = 96; // Larger size for visibility
+const FONT_SIZE = 48; // Match atlas glyph size for 1:1 ratio
 const FONT_PATH = "/test-fixtures/Roboto-Regular.ttf"; // Served from demo/public/ symlink
 
 /**
@@ -71,7 +71,11 @@ async function main(): Promise<void> {
     // Get unique characters from demo text
     const chars = Array.from(new Set(DEMO_TEXT)).join("");
 
-    const atlas = await generateAtlas(font, chars);
+    const atlas = await generateAtlas(font, chars, {
+      glyphSize: 48, // Increase from default 24 for better quality
+      padding: 4,
+      distanceRange: 6, // Increase range for smoother gradients
+    });
     const generationTime = performance.now() - startTime;
 
     console.log(
@@ -109,8 +113,8 @@ async function main(): Promise<void> {
     );
 
     // Step 6: Set rendering parameters
-    renderer.setColor(0.0, 1.0, 1.0, 1.0); // Bright cyan text for visibility
-    renderer.setVisualizationMode(0); // Rendered mode
+    renderer.setColor(1.0, 1.0, 1.0, 1.0); // White text
+    renderer.setVisualizationMode(0); // Rendered mode with antialiasing
 
     // Step 7: Initialize viewport
     const viewport = new Viewport(canvas.width, canvas.height);

@@ -84,18 +84,19 @@ export const BufferLayout = {
 /**
  * Create a Float32Array for a quad's vertex buffer
  * Contains 6 vertices (2 triangles) with positions and texture coordinates
+ * Quad spans from (0,0) to (1,1) with V flipped (V=1 at bottom, V=0 at top)
  */
 export function createQuadVertexData(): Float32Array {
   return new Float32Array([
     // Triangle 1
-    -0.5, -0.5, 0.0, 0.0, // Bottom-left
-    0.5, -0.5, 1.0, 0.0, // Bottom-right
-    0.5, 0.5, 1.0, 1.0, // Top-right
+    0.0, 0.0, 0.0, 1.0, // Bottom-left: position (0,0), UV (0,1)
+    1.0, 0.0, 1.0, 1.0, // Bottom-right: position (1,0), UV (1,1)
+    1.0, 1.0, 1.0, 0.0, // Top-right: position (1,1), UV (1,0)
 
     // Triangle 2
-    -0.5, -0.5, 0.0, 0.0, // Bottom-left
-    0.5, 0.5, 1.0, 1.0, // Top-right
-    -0.5, 0.5, 0.0, 1.0, // Top-left
+    0.0, 0.0, 0.0, 1.0, // Bottom-left: position (0,0), UV (0,1)
+    1.0, 1.0, 1.0, 0.0, // Top-right: position (1,1), UV (1,0)
+    0.0, 1.0, 0.0, 0.0, // Top-left: position (0,1), UV (0,0)
   ]);
 }
 
@@ -111,13 +112,12 @@ export function createUniformData(data: UniformData): Float32Array {
   // Color (4 floats)
   buffer.set(data.color, 16);
 
-  // Mode (1 u32, stored as float)
-  buffer[20] = data.mode;
-
-  // Padding (3 u32 to reach 96 bytes / 16-byte alignment)
-  buffer[21] = 0;
-  buffer[22] = 0;
-  buffer[23] = 0;
+  // Mode (1 u32) - use Uint32Array view to write as integer
+  const uint32View = new Uint32Array(buffer.buffer, 20 * 4, 4);
+  uint32View[0] = data.mode;
+  uint32View[1] = 0; // padding
+  uint32View[2] = 0; // padding
+  uint32View[3] = 0; // padding
 
   return buffer;
 }
